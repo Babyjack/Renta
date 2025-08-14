@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculateur d'Investissement Immobilier</title>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1c2d41;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #495057;
+            font-weight: 600;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #4d94ff;
+            box-shadow: 0 0 0 3px rgba(77, 148, 255, 0.25);
+        }
+
+        .results {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            font-size: 1.1rem;
+        }
+        
+        /* Style specific for new elements */
+        .result-item.target-price {
+            background-color: #e6f7ff;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin-left: -1rem;
+            margin-right: -1rem;
+            border-radius: 8px;
+        }
+
+        .result-item:not(:last-child) {
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .result-item .label {
+            color: #343a40;
+        }
+
+        .result-item .value {
+            font-weight: 700;
+            color: #007bff;
+            font-size: 1.2rem;
+        }
+        
+        /* Style specific for new elements */
+        .result-item.target-price .value {
+            color: #28a745; /* Green for target price */
+        }
+        
+        .result-item .reduction-value {
+             color: #dc3545; /* Red for the reduction */
+        }
+
+
+        .error-message {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: 500;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Calculateur Immobilier ðŸ¡</h1>
+
+        <div class="input-group">
+            <label for="prix">Prix d'acquisition (â‚¬)</label>
+            <input type="number" id="prix" placeholder="ex: 200000">
+        </div>
+
+        <div class="input-group">
+            <label for="loyer">Loyer mensuel (â‚¬)</label>
+            <input type="number" id="loyer" placeholder="ex: 800">
+        </div>
+
+        <div class="input-group">
+            <label for="taux">Taux d'intÃ©rÃªt annuel (%)</label>
+            <input type="number" id="taux" placeholder="ex: 3.5">
+        </div>
+
+        <div class="input-group">
+            <label for="duree">Nombre de mensualitÃ©s</label>
+            <input type="number" id="duree" value="300">
+        </div>
+
+        <div class="results">
+            <div class="result-item">
+                <span class="label">MensualitÃ© du crÃ©dit :</span>
+                <span class="value" id="outputMensualite">0,00 â‚¬</span>
+            </div>
+            <div class="result-item">
+                <span class="label">Taux d'endettement :</span>
+                <span class="value" id="outputEndettement">0,0 %</span>
+            </div>
+            <div class="result-item">
+                <span class="label">Rendement Brut :</span>
+                <span class="value" id="outputRendement">0,00 %</span>
+            </div>
+            <div class="result-item">
+                <span class="label">Rendement Cible :</span>
+                <span class="value" id="outputRendementSouhaite">0,00 %</span>
+            </div>
+            <div class="result-item target-price">
+                <span class="label"><strong>Prix Cible :</strong></span>
+                <span class="value" id="outputPrixCible">0,00 â‚¬</span>
+            </div>
+             <div class="result-item">
+                <span class="label"><strong>RÃ©duction Ã  nÃ©gocier :</strong></span>
+                <span class="value reduction-value" id="outputReduction">0,0 %</span>
+            </div>
+        </div>
+        <p id="error" class="error-message">Veuillez remplir tous les champs avec des valeurs valides.</p>
+    </div>
+
+    <script>
+        const inputs = document.querySelectorAll('input[type="number"]');
+
+        function calculate() {
+            const prix = parseFloat(document.getElementById('prix').value);
+            const loyer = parseFloat(document.getElementById('loyer').value);
+            const tauxAnnuel = parseFloat(document.getElementById('taux').value);
+            const nbMensualites = parseInt(document.getElementById('duree').value, 10);
+            
+            const errorElement = document.getElementById('error');
+
+            if (isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) || prix <= 0 || loyer <= 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
+                errorElement.style.display = 'block';
+                // Reset outputs
+                document.getElementById('outputMensualite').textContent = '0,00 â‚¬';
+                document.getElementById('outputEndettement').textContent = '0,0 %';
+                document.getElementById('outputRendement').textContent = '0,00 %';
+                document.getElementById('outputRendementSouhaite').textContent = '0,00 %';
+                // AJOUT : Reset des nouveaux champs
+                document.getElementById('outputPrixCible').textContent = '0,00 â‚¬';
+                document.getElementById('outputReduction').textContent = '0,0 %';
+                return;
+            }
+            errorElement.style.display = 'none';
+
+            const tauxMensuel = tauxAnnuel / 100 / 12;
+
+            const pmtNumerator = tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites);
+            const pmtDenominator = Math.pow(1 + tauxMensuel, nbMensualites) - 1;
+            const mensualite = prix * (pmtNumerator / pmtDenominator);
+
+            const endettement = (mensualite / (0.80 * loyer)) * 100;
+            const rendement = ((loyer * 12) / prix) * 100;
+            
+            const part1 = (1 - Math.pow(1 + tauxMensuel, -nbMensualites)) / tauxMensuel;
+            const rendementSouhaite = (12 / (0.35 * part1)) * 100;
+            
+            // --- AJOUT : CALCULS DU PRIX CIBLE ET DE LA RÃ‰DUCTION ---
+            
+            // 1. Calculer le prix cible
+            // Formule: Prix Cible = (Loyer * 12) / Rendement Cible (en dÃ©cimal)
+            const prixCible = (loyer * 12) / (rendementSouhaite / 100);
+
+            // 2. Calculer le pourcentage de rÃ©duction nÃ©cessaire
+            // Formule: ((Prix Actuel - Prix Cible) / Prix Actuel) * 100
+            const reduction = ((prix - prixCible) / prix) * 100;
+
+            // --- FIN DES AJOUTS DE CALCUL ---
+
+
+            const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+            const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 });
+
+            document.getElementById('outputMensualite').textContent = currencyFormatter.format(mensualite);
+            document.getElementById('outputEndettement').textContent = `${endettement.toFixed(1).replace('.', ',')} %`;
+            document.getElementById('outputRendement').textContent = percentFormatter.format(rendement / 100);
+            document.getElementById('outputRendementSouhaite').textContent = percentFormatter.format(rendementSouhaite / 100);
+
+            // --- AJOUT : AFFICHAGE DES NOUVEAUX RÃ‰SULTATS ---
+            document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCible);
+
+            // Afficher la rÃ©duction seulement si elle est positive (si une nÃ©go est nÃ©cessaire)
+            if (reduction > 0) {
+                document.getElementById('outputReduction').textContent = `${reduction.toFixed(1).replace('.', ',')} %`;
+            } else {
+                document.getElementById('outputReduction').textContent = '0,0 %'; // Pas de rÃ©duction nÃ©cessaire
+            }
+        }
+
+        inputs.forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+        
+        calculate();
+
+    </script>
+
+</body>
+</html>
