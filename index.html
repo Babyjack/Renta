@@ -85,7 +85,6 @@
             font-size: 1.2rem;
         }
         
-        /* Specific colors for cashflow */
         .cashflow-positive { color: #28a745 !important; }
         .cashflow-negative { color: #dc3545 !important; }
 
@@ -205,9 +204,29 @@
 
     <script>
         const inputs = document.querySelectorAll('input[type="number"]');
+        // --- NOUVEAU: List of all input IDs to save ---
+        const inputIds = ['prix', 'loyer', 'taux', 'duree', 'salaire', 'mensualiteActuel'];
+
+        // --- NOUVEAU: Function to save data to localStorage ---
+        function saveData() {
+            inputIds.forEach(id => {
+                const value = document.getElementById(id).value;
+                localStorage.setItem(id, value);
+            });
+        }
+
+        // --- NOUVEAU: Function to load data from localStorage ---
+        function loadData() {
+            inputIds.forEach(id => {
+                const savedValue = localStorage.getItem(id);
+                // Only set value if it was previously saved
+                if (savedValue !== null) {
+                    document.getElementById(id).value = savedValue;
+                }
+            });
+        }
 
         function calculate() {
-            // --- 1. RÉCUPÉRER TOUTES LES ENTRÉES ---
             const salaire = parseFloat(document.getElementById('salaire').value);
             const mensualiteActuel = parseFloat(document.getElementById('mensualiteActuel').value);
             const prix = parseFloat(document.getElementById('prix').value);
@@ -217,7 +236,6 @@
             
             const errorElement = document.getElementById('error');
             
-            // --- 2. VALIDER LES ENTRÉES ---
             if (isNaN(salaire) || isNaN(mensualiteActuel) || isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) ||
                 salaire < 0 || mensualiteActuel < 0 || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
                 errorElement.style.display = 'block';
@@ -226,25 +244,19 @@
             }
             errorElement.style.display = 'none';
 
-            // --- 3. CALCULS ---
             const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
             
-            // SECTION SITUATION ACTUELLE
             const endettementActuelTaux = salaire > 0 ? (mensualiteActuel / salaire) : 0;
             const capaciteEndettement = 0.35 * salaire - mensualiteActuel;
             
-            // SECTION PROJET IMMOBILIER
             const tauxMensuel = tauxAnnuel / 100 / 12;
             const facteurPMT = (tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites)) / (Math.pow(1 + tauxMensuel, nbMensualites) - 1);
             const mensualiteProjet = prix * facteurPMT;
             
-            // NOUVEAU: Cashflow
             const cashflow = loyer - mensualiteProjet;
 
-            // NOUVEAU: Endettement du projet seul
             const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / loyer) : 0;
 
-            // SECTION ANALYSE DE LA DETTE
             const denominateurDette = loyer + salaire;
             const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
             
@@ -255,16 +267,13 @@
             }
             const reductionMinimum = prix > 0 ? ((prix - prixAcceptable) / prix) * 100 : 0;
             
-            // SECTION ANALYSE DU RENDEMENT
             const rendementBrut = prix > 0 && loyer > 0 ? ((loyer * 12) / prix) * 100 : 0;
             const part1 = (1 - Math.pow(1 + tauxMensuel, -nbMensualites)) / tauxMensuel;
             const rendementSouhaite = (12 / (0.35 * part1)) * 100;
             const prixCibleRendement = rendementSouhaite > 0 && loyer > 0 ? (loyer * 12) / (rendementSouhaite / 100) : 0;
             
-            // NOUVEAU: Réduction Cible
             const reductionCible = prix > 0 ? ((prix - prixCibleRendement) / prix) * 100 : 0;
 
-            // --- 4. AFFICHER LES RÉSULTATS ---
             document.getElementById('outputEndettementActuel').textContent = `${(endettementActuelTaux * 100).toFixed(1).replace('.', ',')} %`;
             document.getElementById('outputCapacite').textContent = currencyFormatter.format(Math.max(0, capaciteEndettement));
             
@@ -283,10 +292,15 @@
             document.getElementById('outputRendementSouhaite').textContent = `${rendementSouhaite.toFixed(2).replace('.', ',')} %`;
             document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCibleRendement);
             document.getElementById('outputReductionCible').textContent = `${Math.max(0, reductionCible).toFixed(1).replace('.', ',')} %`;
+        
+            // --- NOUVEAU: Save data after a successful calculation ---
+            saveData();
         }
 
         inputs.forEach(input => input.addEventListener('input', calculate));
         
+        // --- MODIFIÉ: On page load, load data first, then calculate ---
+        loadData();
         calculate();
 
     </script>
