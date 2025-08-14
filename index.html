@@ -74,7 +74,6 @@
             font-size: 1.1rem;
         }
         
-        /* Style specific for new elements */
         .result-item.target-price {
             background-color: #e6f7ff;
             padding-left: 1rem;
@@ -98,7 +97,6 @@
             font-size: 1.2rem;
         }
         
-        /* Style specific for new elements */
         .result-item.target-price .value {
             color: #28a745; /* Green for target price */
         }
@@ -106,7 +104,6 @@
         .result-item .reduction-value {
              color: #dc3545; /* Red for the reduction */
         }
-
 
         .error-message {
             color: #dc3545;
@@ -120,32 +117,32 @@
 <body>
 
     <div class="container">
-        <h1>Calculateur Immobilier ðŸ¡</h1>
+        <h1>Calculateur Immobilier 🏡</h1>
 
         <div class="input-group">
-            <label for="prix">Prix d'acquisition (â‚¬)</label>
+            <label for="prix">Prix d'acquisition (€)</label>
             <input type="number" id="prix" placeholder="ex: 200000">
         </div>
 
         <div class="input-group">
-            <label for="loyer">Loyer mensuel (â‚¬)</label>
+            <label for="loyer">Loyer mensuel (€)</label>
             <input type="number" id="loyer" placeholder="ex: 800">
         </div>
 
         <div class="input-group">
-            <label for="taux">Taux d'intÃ©rÃªt annuel (%)</label>
+            <label for="taux">Taux d'intérêt annuel (%)</label>
             <input type="number" id="taux" placeholder="ex: 3.5">
         </div>
 
         <div class="input-group">
-            <label for="duree">Nombre de mensualitÃ©s</label>
+            <label for="duree">Nombre de mensualités</label>
             <input type="number" id="duree" value="300">
         </div>
 
         <div class="results">
             <div class="result-item">
-                <span class="label">MensualitÃ© du crÃ©dit :</span>
-                <span class="value" id="outputMensualite">0,00 â‚¬</span>
+                <span class="label">Mensualité du crédit :</span>
+                <span class="value" id="outputMensualite">0,00 €</span>
             </div>
             <div class="result-item">
                 <span class="label">Taux d'endettement :</span>
@@ -161,10 +158,10 @@
             </div>
             <div class="result-item target-price">
                 <span class="label"><strong>Prix Cible :</strong></span>
-                <span class="value" id="outputPrixCible">0,00 â‚¬</span>
+                <span class="value" id="outputPrixCible">0,00 €</span>
             </div>
              <div class="result-item">
-                <span class="label"><strong>RÃ©duction Ã  nÃ©gocier :</strong></span>
+                <span class="label"><strong>Réduction à négocier :</strong></span>
                 <span class="value reduction-value" id="outputReduction">0,0 %</span>
             </div>
         </div>
@@ -182,15 +179,15 @@
             
             const errorElement = document.getElementById('error');
 
-            if (isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) || prix <= 0 || loyer <= 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
+            // MODIFICATION 1: Change 'loyer <= 0' to 'loyer < 0' to accept 0 as a valid value.
+            if (isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
                 errorElement.style.display = 'block';
                 // Reset outputs
-                document.getElementById('outputMensualite').textContent = '0,00 â‚¬';
+                document.getElementById('outputMensualite').textContent = '0,00 €';
                 document.getElementById('outputEndettement').textContent = '0,0 %';
                 document.getElementById('outputRendement').textContent = '0,00 %';
                 document.getElementById('outputRendementSouhaite').textContent = '0,00 %';
-                // AJOUT : Reset des nouveaux champs
-                document.getElementById('outputPrixCible').textContent = '0,00 â‚¬';
+                document.getElementById('outputPrixCible').textContent = '0,00 €';
                 document.getElementById('outputReduction').textContent = '0,0 %';
                 return;
             }
@@ -202,41 +199,36 @@
             const pmtDenominator = Math.pow(1 + tauxMensuel, nbMensualites) - 1;
             const mensualite = prix * (pmtNumerator / pmtDenominator);
 
-            const endettement = (mensualite / (0.80 * loyer)) * 100;
-            const rendement = ((loyer * 12) / prix) * 100;
+            // MODIFICATION 2: Handle calculation when 'loyer' is 0 to avoid division by zero.
+            const endettement = loyer > 0 ? (mensualite / (0.80 * loyer)) * 100 : Infinity;
+            const rendement = loyer > 0 ? ((loyer * 12) / prix) * 100 : 0;
             
             const part1 = (1 - Math.pow(1 + tauxMensuel, -nbMensualites)) / tauxMensuel;
             const rendementSouhaite = (12 / (0.35 * part1)) * 100;
             
-            // --- AJOUT : CALCULS DU PRIX CIBLE ET DE LA RÃ‰DUCTION ---
-            
-            // 1. Calculer le prix cible
-            // Formule: Prix Cible = (Loyer * 12) / Rendement Cible (en dÃ©cimal)
-            const prixCible = (loyer * 12) / (rendementSouhaite / 100);
-
-            // 2. Calculer le pourcentage de rÃ©duction nÃ©cessaire
-            // Formule: ((Prix Actuel - Prix Cible) / Prix Actuel) * 100
-            const reduction = ((prix - prixCible) / prix) * 100;
-
-            // --- FIN DES AJOUTS DE CALCUL ---
-
+            const prixCible = loyer > 0 ? (loyer * 12) / (rendementSouhaite / 100) : 0;
+            const reduction = prixCible > 0 ? ((prix - prixCible) / prix) * 100 : 0;
 
             const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
             const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 });
 
             document.getElementById('outputMensualite').textContent = currencyFormatter.format(mensualite);
-            document.getElementById('outputEndettement').textContent = `${endettement.toFixed(1).replace('.', ',')} %`;
+            
+            // MODIFICATION 3: Display 'N/A' (Non Applicable) if endettement is infinite.
+            if (endettement === Infinity) {
+                document.getElementById('outputEndettement').textContent = 'N/A';
+            } else {
+                document.getElementById('outputEndettement').textContent = `${endettement.toFixed(1).replace('.', ',')} %`;
+            }
+            
             document.getElementById('outputRendement').textContent = percentFormatter.format(rendement / 100);
             document.getElementById('outputRendementSouhaite').textContent = percentFormatter.format(rendementSouhaite / 100);
-
-            // --- AJOUT : AFFICHAGE DES NOUVEAUX RÃ‰SULTATS ---
             document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCible);
 
-            // Afficher la rÃ©duction seulement si elle est positive (si une nÃ©go est nÃ©cessaire)
             if (reduction > 0) {
                 document.getElementById('outputReduction').textContent = `${reduction.toFixed(1).replace('.', ',')} %`;
             } else {
-                document.getElementById('outputReduction').textContent = '0,0 %'; // Pas de rÃ©duction nÃ©cessaire
+                document.getElementById('outputReduction').textContent = '0,0 %';
             }
         }
 
