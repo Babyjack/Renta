@@ -147,9 +147,18 @@
         <h2>Analyse Complète du Projet</h2>
          <div class="results">
             <div class="result-item" id="itemEndettementActuel">
-                <span class="label">Taux d'endettement actuel :</span>
+                <span class="label">Taux d'endettement propre :</span>
                 <span class="value" id="outputEndettementActuel">0,0 %</span>
             </div>
+             <div class="result-item">
+                    <span class="label">Endettement (projet seul) :</span>
+                    <span class="value" id="outputEndettementProjetSeul">0,0 %</span>
+             </div>
+             <div class="result-item">
+                    <span class="label">Endettement total :</span>
+                    <span class="value" id="outputEndettementTotal">0,0 %</span>
+             </div>
+             <hr>
             <div class="result-item" id="itemCapaciteMensuelle">
                 <span class="label">Capacité d'emprunt propre :</span>
                 <span class="value" id="outputCapacite">0,00 €</span>
@@ -158,12 +167,13 @@
                     <span class="label">Capacité d'emprunt locative :</span>
                     <span class="value" id="outputCapaciteLocative">0,00 €</span>
              </div>
-            <hr>
+            
             
             <div class="result-item">
                 <span class="label">Mensualité du projet immobilier :</span>
                 <span class="value" id="outputMensualite">0,00 €</span>
             </div>
+             <hr>
 
             <div class="result-item highlight">
                 <span class="label"><strong>Capacités - Mensualités :</strong></span>
@@ -175,10 +185,7 @@
                     <span class="value" id="outputCashflow">0,00 €</span>
                 </div>
                 <hr>
-                <div class="result-item">
-                    <span class="label">Endettement (projet seul) :</span>
-                    <span class="value" id="outputEndettementProjetSeul">0,0 %</span>
-                </div>
+                
                 <div class="result-item">
                     <span class="label">Rendement Brut :</span>
                     <span class="value" id="outputRendement">0,00 %</span>
@@ -199,12 +206,9 @@
 
             <div id="reductionResults" style="display:none;">
                 <hr>
-                <div class="result-item">
-                    <span class="label">Endettement total projet inclus :</span>
-                    <span class="value" id="outputEndettementTotal">0,0 %</span>
-                </div>
+                
                 <div class="result-item highlight">
-                    <span class="label"><strong>Prix acceptable (pour 35% dette) :</strong></span>
+                    <span class="label"><strong>Prix max (35% dette) :</strong></span>
                     <span class="value" id="outputPrixAcceptable">0,00 €</span>
                 </div>
                 <div class="result-item">
