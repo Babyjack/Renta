@@ -10,24 +10,23 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: #f0f2f5;
             display: flex;
-            justify-content: center;
+            flex-direction: column; /* Allow multiple sections */
             align-items: center;
-            min-height: 100vh;
-            margin: 0;
             padding: 20px;
             box-sizing: border-box;
         }
 
         .container {
             background-color: #ffffff;
-            padding: 2rem;
+            padding: 1.5rem 2rem;
             border-radius: 12px;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
+            margin-bottom: 20px; /* Space between sections */
         }
 
-        h1 {
+        h1, h2 {
             text-align: center;
             color: #1c2d41;
             margin-bottom: 1.5rem;
@@ -61,26 +60,15 @@
         }
 
         .results {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e9ecef;
+            margin-top: 1rem;
         }
-
+        
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.75rem 0;
+            padding: 0.85rem 0;
             font-size: 1.1rem;
-        }
-        
-        .result-item.target-price {
-            background-color: #e6f7ff;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            margin-left: -1rem;
-            margin-right: -1rem;
-            border-radius: 8px;
         }
 
         .result-item:not(:last-child) {
@@ -96,73 +84,103 @@
             color: #007bff;
             font-size: 1.2rem;
         }
-        
-        .result-item.target-price .value {
-            color: #28a745; /* Green for target price */
+
+        .highlight {
+            background-color: #e6f7ff;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin: 0 -1rem;
+            border-radius: 8px;
         }
-        
-        .result-item .reduction-value {
-             color: #dc3545; /* Red for the reduction */
-        }
+
+        .highlight .value { color: #28a745; }
+        .reduction-value { color: #dc3545 !important; }
 
         .error-message {
             color: #dc3545;
             text-align: center;
             margin-top: 1rem;
             font-weight: 500;
-            display: none; /* Hidden by default */
+            display: none;
         }
     </style>
 </head>
 <body>
-
+    <h1>Calculateur Immobilier 🏡</h1>
+    
     <div class="container">
-        <h1>Calculateur Immobilier 🏡</h1>
-
+        <h2>Votre Situation Actuelle</h2>
+        <div class="input-group">
+            <label for="salaire">Salaire mensuel net (€)</label>
+            <input type="number" id="salaire" placeholder="ex: 2500">
+        </div>
+        <div class="input-group">
+            <label for="mensualiteActuel">Autres mensualités (crédits, LLD...)</label>
+            <input type="number" id="mensualiteActuel" placeholder="ex: 300">
+        </div>
+        <div class="results">
+             <div class="result-item">
+                <span class="label">Taux d'endettement actuel :</span>
+                <span class="value" id="outputEndettementActuel">0,0 %</span>
+            </div>
+             <div class="result-item">
+                <span class="label">Capacité d'emprunt restante :</span>
+                <span class="value" id="outputCapacite">0,00 €</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h2>Projet Immobilier</h2>
         <div class="input-group">
             <label for="prix">Prix d'acquisition (€)</label>
             <input type="number" id="prix" placeholder="ex: 200000">
         </div>
-
         <div class="input-group">
-            <label for="loyer">Loyer mensuel (€)</label>
+            <label for="loyer">Loyer mensuel estimé (€)</label>
             <input type="number" id="loyer" placeholder="ex: 800">
         </div>
-
         <div class="input-group">
             <label for="taux">Taux d'intérêt annuel (%)</label>
             <input type="number" id="taux" placeholder="ex: 3.5">
         </div>
-
         <div class="input-group">
             <label for="duree">Nombre de mensualités</label>
             <input type="number" id="duree" value="300">
         </div>
-
-        <div class="results">
+    </div>
+    
+    <div class="container">
+        <h2>Analyse Complète du Projet</h2>
+         <div class="results">
             <div class="result-item">
-                <span class="label">Mensualité du crédit :</span>
+                <span class="label">Nouvelle mensualité du crédit :</span>
                 <span class="value" id="outputMensualite">0,00 €</span>
             </div>
             <div class="result-item">
-                <span class="label">Taux d'endettement :</span>
-                <span class="value" id="outputEndettement">0,0 %</span>
+                <span class="label">Endettement total projet inclus :</span>
+                <span class="value" id="outputEndettementTotal">0,0 %</span>
             </div>
+            <div class="result-item highlight">
+                <span class="label"><strong>Prix acceptable (pour 35% dette) :</strong></span>
+                <span class="value" id="outputPrixAcceptable">0,00 €</span>
+            </div>
+            <div class="result-item">
+                <span class="label"><strong>Réduction min. à négocier :</strong></span>
+                <span class="value reduction-value" id="outputReductionMinimum">0,0 %</span>
+            </div>
+            <hr>
             <div class="result-item">
                 <span class="label">Rendement Brut :</span>
                 <span class="value" id="outputRendement">0,00 %</span>
             </div>
             <div class="result-item">
-                <span class="label">Rendement Cible :</span>
+                <span class="label">Rendement Cible (selon crédit) :</span>
                 <span class="value" id="outputRendementSouhaite">0,00 %</span>
             </div>
-            <div class="result-item target-price">
-                <span class="label"><strong>Prix Cible :</strong></span>
+             <div class="result-item highlight">
+                <span class="label"><strong>Prix Cible (pour rendement) :</strong></span>
                 <span class="value" id="outputPrixCible">0,00 €</span>
-            </div>
-             <div class="result-item">
-                <span class="label"><strong>Réduction à négocier :</strong></span>
-                <span class="value reduction-value" id="outputReduction">0,0 %</span>
             </div>
         </div>
         <p id="error" class="error-message">Veuillez remplir tous les champs avec des valeurs valides.</p>
@@ -172,73 +190,80 @@
         const inputs = document.querySelectorAll('input[type="number"]');
 
         function calculate() {
+            // --- 1. RÉCUPÉRER TOUTES LES ENTRÉES ---
+            const salaire = parseFloat(document.getElementById('salaire').value);
+            const mensualiteActuel = parseFloat(document.getElementById('mensualiteActuel').value);
             const prix = parseFloat(document.getElementById('prix').value);
             const loyer = parseFloat(document.getElementById('loyer').value);
             const tauxAnnuel = parseFloat(document.getElementById('taux').value);
             const nbMensualites = parseInt(document.getElementById('duree').value, 10);
             
             const errorElement = document.getElementById('error');
-
-            // MODIFICATION 1: Change 'loyer <= 0' to 'loyer < 0' to accept 0 as a valid value.
-            if (isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
+            
+            // --- 2. VALIDER LES ENTRÉES ---
+            if (isNaN(salaire) || isNaN(mensualiteActuel) || isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) ||
+                salaire < 0 || mensualiteActuel < 0 || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
                 errorElement.style.display = 'block';
-                // Reset outputs
-                document.getElementById('outputMensualite').textContent = '0,00 €';
-                document.getElementById('outputEndettement').textContent = '0,0 %';
-                document.getElementById('outputRendement').textContent = '0,00 %';
-                document.getElementById('outputRendementSouhaite').textContent = '0,00 %';
-                document.getElementById('outputPrixCible').textContent = '0,00 €';
-                document.getElementById('outputReduction').textContent = '0,0 %';
+                // Reset all outputs if validation fails
+                document.querySelectorAll('.value').forEach(el => el.textContent = '...');
                 return;
             }
             errorElement.style.display = 'none';
 
-            const tauxMensuel = tauxAnnuel / 100 / 12;
-
-            const pmtNumerator = tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites);
-            const pmtDenominator = Math.pow(1 + tauxMensuel, nbMensualites) - 1;
-            const mensualite = prix * (pmtNumerator / pmtDenominator);
-
-            // MODIFICATION 2: Handle calculation when 'loyer' is 0 to avoid division by zero.
-            const endettement = loyer > 0 ? (mensualite / (0.80 * loyer)) * 100 : Infinity;
-            const rendement = loyer > 0 ? ((loyer * 12) / prix) * 100 : 0;
+            // --- 3. CALCULS ---
+            const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
             
+            // SECTION 1: ENDETTEMENT ACTUEL
+            const endettementActuelTaux = salaire > 0 ? (mensualiteActuel / salaire) : 0;
+            const capaciteEndettement = (0.35 - endettementActuelTaux) * salaire;
+            
+            // CALCULS DU PROJET IMMOBILIER
+            const tauxMensuel = tauxAnnuel / 100 / 12;
+            const facteurPMT = (tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites)) / (Math.pow(1 + tauxMensuel, nbMensualites) - 1);
+            const mensualiteProjet = prix * facteurPMT;
+            
+            // SECTION 2: ANALYSE DE LA DETTE DU PROJET
+            const denominateurDette = loyer + salaire;
+            const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
+            
+            // Calcul inversé pour le prix acceptable
+            let prixAcceptable = 0;
+            const mensualiteCible = (0.35 * denominateurDette) - mensualiteActuel;
+            if (mensualiteCible > 0 && facteurPMT > 0) {
+                prixAcceptable = mensualiteCible / facteurPMT;
+            }
+            const reductionMinimum = prix > 0 ? ((prix - prixAcceptable) / prix) * 100 : 0;
+            
+            // CALCULS DE RENDEMENT (Anciens calculs)
+            const rendementBrut = prix > 0 && loyer > 0 ? ((loyer * 12) / prix) * 100 : 0;
             const part1 = (1 - Math.pow(1 + tauxMensuel, -nbMensualites)) / tauxMensuel;
             const rendementSouhaite = (12 / (0.35 * part1)) * 100;
-            
-            const prixCible = loyer > 0 ? (loyer * 12) / (rendementSouhaite / 100) : 0;
-            const reduction = prixCible > 0 ? ((prix - prixCible) / prix) * 100 : 0;
+            const prixCibleRendement = rendementSouhaite > 0 && loyer > 0 ? (loyer * 12) / (rendementSouhaite / 100) : 0;
 
-            const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
-            const percentFormatter = new Intl.NumberFormat('fr-FR', { style: 'percent', minimumFractionDigits: 2 });
-
-            document.getElementById('outputMensualite').textContent = currencyFormatter.format(mensualite);
+            // --- 4. AFFICHER LES RÉSULTATS ---
+            // Affichage Section 1
+            document.getElementById('outputEndettementActuel').textContent = `${(endettementActuelTaux * 100).toFixed(1).replace('.', ',')} %`;
+            document.getElementById('outputCapacite').textContent = currencyFormatter.format(Math.max(0, capaciteEndettement));
             
-            // MODIFICATION 3: Display 'N/A' (Non Applicable) if endettement is infinite.
-            if (endettement === Infinity) {
-                document.getElementById('outputEndettement').textContent = 'N/A';
-            } else {
-                document.getElementById('outputEndettement').textContent = `${endettement.toFixed(1).replace('.', ',')} %`;
-            }
+            // Affichage Section Projet
+            document.getElementById('outputMensualite').textContent = currencyFormatter.format(mensualiteProjet);
             
-            document.getElementById('outputRendement').textContent = percentFormatter.format(rendement / 100);
-            document.getElementById('outputRendementSouhaite').textContent = percentFormatter.format(rendementSouhaite / 100);
-            document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCible);
-
-            if (reduction > 0) {
-                document.getElementById('outputReduction').textContent = `${reduction.toFixed(1).replace('.', ',')} %`;
-            } else {
-                document.getElementById('outputReduction').textContent = '0,0 %';
-            }
+            // Affichage Section 2
+            document.getElementById('outputEndettementTotal').textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
+            document.getElementById('outputPrixAcceptable').textContent = currencyFormatter.format(prixAcceptable);
+            document.getElementById('outputReductionMinimum').textContent = `${Math.max(0, reductionMinimum).toFixed(1).replace('.', ',')} %`;
+            
+            // Affichage Rendements
+            document.getElementById('outputRendement').textContent = `${rendementBrut.toFixed(2).replace('.', ',')} %`;
+            document.getElementById('outputRendementSouhaite').textContent = `${rendementSouhaite.toFixed(2).replace('.', ',')} %`;
+            document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCibleRendement);
         }
 
-        inputs.forEach(input => {
-            input.addEventListener('input', calculate);
-        });
+        inputs.forEach(input => input.addEventListener('input', calculate));
         
+        // Run once on page load to initialize fields
         calculate();
 
     </script>
-
 </body>
 </html>
