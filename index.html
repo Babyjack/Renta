@@ -166,6 +166,10 @@
             </div>
             <hr>
             <div class="result-item">
+                <span class="label">Capacité d'emprunt locative (80%) :</span>
+                <span class="value" id="outputCapaciteLocative">0,00 €</span>
+            </div>
+            <div class="result-item">
                 <span class="label">Endettement (projet seul) :</span>
                 <span class="value" id="outputEndettementProjetSeul">0,0 %</span>
             </div>
@@ -204,10 +208,8 @@
 
     <script>
         const inputs = document.querySelectorAll('input[type="number"]');
-        // --- NOUVEAU: List of all input IDs to save ---
         const inputIds = ['prix', 'loyer', 'taux', 'duree', 'salaire', 'mensualiteActuel'];
 
-        // --- NOUVEAU: Function to save data to localStorage ---
         function saveData() {
             inputIds.forEach(id => {
                 const value = document.getElementById(id).value;
@@ -215,11 +217,9 @@
             });
         }
 
-        // --- NOUVEAU: Function to load data from localStorage ---
         function loadData() {
             inputIds.forEach(id => {
                 const savedValue = localStorage.getItem(id);
-                // Only set value if it was previously saved
                 if (savedValue !== null) {
                     document.getElementById(id).value = savedValue;
                 }
@@ -246,9 +246,11 @@
 
             const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
             
+            // Calculs de votre situation actuelle
             const endettementActuelTaux = salaire > 0 ? (mensualiteActuel / salaire) : 0;
             const capaciteEndettement = 0.35 * salaire - mensualiteActuel;
             
+            // Calculs du projet immobilier
             const tauxMensuel = tauxAnnuel / 100 / 12;
             const facteurPMT = (tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites)) / (Math.pow(1 + tauxMensuel, nbMensualites) - 1);
             const mensualiteProjet = prix * facteurPMT;
@@ -274,6 +276,10 @@
             
             const reductionCible = prix > 0 ? ((prix - prixCibleRendement) / prix) * 100 : 0;
 
+            // --- NOUVEAU CALCUL : Capacité d'emprunt locative ---
+            const capaciteEmpruntLocative = 0.35 * (0.8 * loyer);
+
+            // Mise à jour des affichages
             document.getElementById('outputEndettementActuel').textContent = `${(endettementActuelTaux * 100).toFixed(1).replace('.', ',')} %`;
             document.getElementById('outputCapacite').textContent = currencyFormatter.format(Math.max(0, capaciteEndettement));
             
@@ -282,6 +288,9 @@
             const cashflowEl = document.getElementById('outputCashflow');
             cashflowEl.textContent = currencyFormatter.format(cashflow);
             cashflowEl.className = `value ${cashflow >= 0 ? 'cashflow-positive' : 'cashflow-negative'}`;
+
+            // --- NOUVEL AFFICHAGE ---
+            document.getElementById('outputCapaciteLocative').textContent = currencyFormatter.format(capaciteEmpruntLocative);
 
             document.getElementById('outputEndettementProjetSeul').textContent = `${(endettementProjetSeulTaux * 100).toFixed(1).replace('.', ',')} %`;
             document.getElementById('outputEndettementTotal').textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
@@ -293,13 +302,11 @@
             document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCibleRendement);
             document.getElementById('outputReductionCible').textContent = `${Math.max(0, reductionCible).toFixed(1).replace('.', ',')} %`;
         
-            // --- NOUVEAU: Save data after a successful calculation ---
             saveData();
         }
 
         inputs.forEach(input => input.addEventListener('input', calculate));
         
-        // --- MODIFIÉ: On page load, load data first, then calculate ---
         loadData();
         calculate();
 
