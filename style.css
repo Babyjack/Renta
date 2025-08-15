@@ -1,9 +1,4 @@
 /*
- * Full CSS for the Real Estate Calculator
- * This file combines the "Glossy Touch" aesthetic with best practices for layout and alignment.
- */
-
-/*
  * General Styles
  * Defines the dark, glossy background and default text colors for a modern, high-contrast look.
  */
@@ -18,7 +13,6 @@ body {
     padding: 3rem 1rem;
     min-height: 100vh;
     box-sizing: border-box;
-    margin: 0; /* Ensures the body has no default margin, providing a full-width background */
 }
 
 h1, h2 {
@@ -28,7 +22,6 @@ h1, h2 {
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* A subtle text shadow for depth */
-    margin-top: 0; /* Removes default top margin from h1 for better alignment */
 }
 
 /*
