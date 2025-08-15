@@ -147,11 +147,11 @@
         <h2>Analyse Complète du Projet</h2>
          <div class="results">
             <div class="result-item" id="itemEndettementActuel">
-                <span class="label">Taux d'endettement propre :</span>
+                <span class="label">Endettement propre :</span>
                 <span class="value" id="outputEndettementActuel">0,0 %</span>
             </div>
              <div class="result-item">
-                    <span class="label">Endettement (projet seul) :</span>
+                    <span class="label">Endettement projet :</span>
                     <span class="value" id="outputEndettementProjetSeul">0,0 %</span>
              </div>
              <div class="result-item">
@@ -170,7 +170,7 @@
             
             
             <div class="result-item">
-                <span class="label">Mensualité du projet immobilier :</span>
+                <span class="label">Mensualité du projet :</span>
                 <span class="value" id="outputMensualite">0,00 €</span>
             </div>
              <hr>
@@ -181,7 +181,7 @@
             </div>
             <div id="locatifResults">
                 <div class="result-item">
-                    <span class="label"><strong>Cashflow du projet immobilier Mensuel Brut :</strong></span>
+                    <span class="label"><strong>Cashflow Brut :</strong></span>
                     <span class="value" id="outputCashflow">0,00 €</span>
                 </div>
                 <hr>
@@ -279,7 +279,7 @@
             const capaciteMensualite = capaciteEndettement + capaciteEmpruntLocative - mensualiteActuel - mensualiteProjet;
 
             const cashflow = loyer - mensualiteProjet;
-            const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / loyer) : 0;
+            const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / (loyer * 0.80)) : 0;
             const denominateurDette = loyer * 0.80 + salaire;
             const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
             
