@@ -150,7 +150,7 @@
                 <span class="label">Endettement propre :</span>
                 <span class="value" id="outputEndettementActuel">0,0 %</span>
             </div>
-             <div class="result-item">
+             <div class="result-item" id="itemEndettementProjet">
                     <span class="label">Endettement projet :</span>
                     <span class="value" id="outputEndettementProjetSeul">0,0 %</span>
              </div>
@@ -163,7 +163,7 @@
                 <span class="label">Capacité d'emprunt propre :</span>
                 <span class="value" id="outputCapacite">0,00 €</span>
             </div>
-             <div class="result-item">
+             <div class="result-item" id="itemCapaciteLocative">
                     <span class="label">Capacité d'emprunt locative :</span>
                     <span class="value" id="outputCapaciteLocative">0,00 €</span>
              </div>
@@ -179,6 +179,7 @@
                 <span class="label"><strong>Capacités - Mensualités :</strong></span>
                 <span class="value" id="outputCapaciteMensualite">0,00 €</span>
             </div>
+
             <div id="locatifResults">
                 <div class="result-item">
                     <span class="label"><strong>Cashflow Brut :</strong></span>
@@ -204,14 +205,14 @@
                 </div>
             </div>
 
-            <div id="reductionResults" style="display:none;">
+            <div id="reductionResults">
                 <hr>
                 
-                <div class="result-item highlight">
+                <div class="result-item highlight" id="itemPrixMax">
                     <span class="label"><strong>Prix max (35% dette) :</strong></span>
                     <span class="value" id="outputPrixAcceptable">0,00 €</span>
                 </div>
-                <div class="result-item">
+                <div class="result-item" id="itemReductionMin">
                     <span class="label"><strong>Réduction min. à négocier :</strong></span>
                     <span class="value reduction-value" id="outputReductionMinimum">0,0 %</span>
                 </div>
@@ -291,7 +292,7 @@
             
             const reductionCible = prix > 0 ? ((prix - prixCibleRendement) / prix) * 100 : 0;
 
-            // Mise à jour de l'affichage
+            // Mise à jour des affichages
             document.getElementById('outputMensualite').textContent = currencyFormatter.format(mensualiteProjet);
             
             const capaciteMensualiteEl = document.getElementById('outputCapaciteMensualite');
@@ -299,32 +300,44 @@
             capaciteMensualiteEl.className = `value ${capaciteMensualite < 0 ? 'cashflow-negative' : 'cashflow-positive'}`;
 
 
-            // Affichage des blocs (toujours visibles)
-            document.getElementById('locatifResults').style.display = 'block';
-            if (capaciteMensualite < 0) {
+            // Logique d'affichage des champs locatifs
+            if (loyer > 0) {
+                document.getElementById('locatifResults').style.display = 'block';
+                document.getElementById('itemEndettementProjet').style.display = 'flex';
+                document.getElementById('itemCapaciteLocative').style.display = 'flex';
+                
+                const cashflowEl = document.getElementById('outputCashflow');
+                cashflowEl.textContent = currencyFormatter.format(cashflow);
+                cashflowEl.className = `value ${cashflow >= 0 ? 'cashflow-positive' : 'cashflow-negative'}`;
+
+                document.getElementById('outputRendement').textContent = `${rendementBrut.toFixed(2).replace('.', ',')} %`;
+                document.getElementById('outputRendementSouhaite').textContent = `${rendementSouhaite.toFixed(2).replace('.', ',')} %`;
+                document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCibleRendement);
+                document.getElementById('outputReductionCible').textContent = `${Math.max(0, reductionCible).toFixed(1).replace('.', ',')} %`;
+            } else {
+                document.getElementById('locatifResults').style.display = 'none';
+                document.getElementById('itemEndettementProjet').style.display = 'none';
+                document.getElementById('itemCapaciteLocative').style.display = 'none';
+            }
+
+            // Logique d'affichage des champs de négociation
+            if (prix > prixAcceptable) {
+                document.getElementById('itemPrixMax').style.display = 'flex';
+                document.getElementById('itemReductionMin').style.display = 'flex';
                 document.getElementById('reductionResults').style.display = 'block';
-                document.getElementById('outputEndettementTotal').textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
                 document.getElementById('outputPrixAcceptable').textContent = currencyFormatter.format(prixAcceptable);
                 document.getElementById('outputReductionMinimum').textContent = `${Math.max(0, reductionMinimum).toFixed(1).replace('.', ',')} %`;
             } else {
+                document.getElementById('itemPrixMax').style.display = 'none';
+                document.getElementById('itemReductionMin').style.display = 'none';
                 document.getElementById('reductionResults').style.display = 'none';
             }
-        
+            
+            // Affichage des valeurs toujours visibles
             document.getElementById('outputEndettementActuel').textContent = `${(endettementActuelTaux * 100).toFixed(1).replace('.', ',')} %`;
             document.getElementById('outputCapacite').textContent = currencyFormatter.format(Math.max(0, capaciteEndettement));
-            document.getElementById('outputEndettementProjetSeul').textContent = `${(endettementProjetSeulTaux * 100).toFixed(1).replace('.', ',')} %`;
             document.getElementById('outputEndettementTotal').textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
-            document.getElementById('outputCapaciteLocative').textContent = currencyFormatter.format(capaciteEmpruntLocative);
-
-            const cashflowEl = document.getElementById('outputCashflow');
-            cashflowEl.textContent = currencyFormatter.format(cashflow);
-            cashflowEl.className = `value ${cashflow >= 0 ? 'cashflow-positive' : 'cashflow-negative'}`;
-
-            document.getElementById('outputRendement').textContent = `${rendementBrut.toFixed(2).replace('.', ',')} %`;
-            document.getElementById('outputRendementSouhaite').textContent = `${rendementSouhaite.toFixed(2).replace('.', ',')} %`;
-            document.getElementById('outputPrixCible').textContent = currencyFormatter.format(prixCibleRendement);
-            document.getElementById('outputReductionCible').textContent = `${Math.max(0, reductionCible).toFixed(1).replace('.', ',')} %`;
-
+            
             saveData();
         }
 
