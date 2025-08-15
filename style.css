@@ -1,6 +1,10 @@
 /*
+ * Full CSS for the Real Estate Calculator
+ * This version corrects the alignment and responsive issues while maintaining the "Glossy Touch" aesthetic.
+ */
+
+/*
  * General Styles
- * Defines the dark, glossy background and default text colors for a modern, high-contrast look.
  */
 body {
     font-family: 'Poppins', sans-serif;
@@ -13,7 +17,7 @@ body {
     min-height: 100vh;
     box-sizing: border-box;
     margin: 0;
-    /* Ensure no maximum width is set on the body */
+    overflow-x: hidden; /* This prevents horizontal scrolling */
 }
 
 h1, h2 {
@@ -24,11 +28,12 @@ h1, h2 {
     letter-spacing: -0.5px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-top: 0;
+    /* Corrects alignment by ensuring headings don't have a specific width */
+    max-width: 100%;
 }
 
 /*
  * Container and Layout
- * The central card-like containers with a maximum width to prevent them from becoming too wide on large screens.
  */
 .container {
     background-color: rgba(255, 255, 255, 0.08);
@@ -37,8 +42,8 @@ h1, h2 {
     border-radius: 1.5rem;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     padding: 2rem;
-    width: 90%; /* Use a relative width to adapt to the screen size */
-    max-width: 550px; /* Keep a max-width to prevent stretching on large monitors */
+    width: 90%;
+    max-width: 550px;
     margin-bottom: 2rem;
     transition: transform 0.2s ease-in-out;
 }
@@ -50,7 +55,6 @@ h1, h2 {
 
 /*
  * Form Elements
- * Use percentage or viewport units for elements that need to fill the width.
  */
 .input-group {
     margin-bottom: 1.5rem;
@@ -65,7 +69,7 @@ label {
 }
 
 input[type="number"] {
-    width: 100%; /* Ensures the input fills the width of its parent container */
+    width: 100%;
     padding: 1rem;
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 0.75rem;
