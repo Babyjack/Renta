@@ -42,7 +42,7 @@ const errorElement = document.getElementById('error');
 
 // --- DATA MANAGEMENT ---
 // An array of input IDs to easily save and load data from local storage.
-const inputIds = ['prix', 'loyer', 'taux', 'duree', 'salaire', 'mensualiteActuel'];
+const inputIds = ['prix', 'loyer', 'taux', 'duree', 'salaire', 'mensualiteActuel', 'endettementMax', 'loyerPrisEnCompte'];
 
 /**
  * Saves the current value of each input to the browser's local storage.
@@ -82,11 +82,14 @@ function calculate() {
     const loyer = parseFloat(document.getElementById('loyer').value);
     const tauxAnnuel = parseFloat(document.getElementById('taux').value);
     const nbMensualites = parseInt(document.getElementById('duree').value, 10);
+    const endettementMax = parseFloat(document.getElementById('endettementMax').value) / 100;
+    const loyerPrisEnCompte = parseFloat(document.getElementById('loyerPrisEnCompte').value) / 100;
 
     // 2. Input Validation
     // This check ensures all inputs are valid numbers and greater than zero where required.
     // If validation fails, show an error and hide all result fields.
     if (isNaN(salaire) || isNaN(mensualiteActuel) || isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) ||
+        isNaN(endettementMax) || isNaN(loyerPrisEnCompte) ||
         salaire < 0 || mensualiteActuel < 0 || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
         errorElement.style.display = 'block';
         Object.values(outputElements).forEach(el => el.textContent = '...');
@@ -103,7 +106,8 @@ function calculate() {
     // 4. Financial Calculations
     // A. Current Situation
     const endettementActuelTaux = salaire > 0 ? (mensualiteActuel / salaire) : 0;
-    const capaciteEndettement = 0.35 * salaire;
+    // Utilise la valeur d'endettement max du nouvel input
+    const capaciteEndettement = endettementMax * salaire;
 
     // B. Project Metrics (Loan details)
     // PMT factor for calculating the monthly mortgage payment.
@@ -117,14 +121,15 @@ function calculate() {
     
     // Formula for calculating the desired return rate based on the loan.
     const part1 = (1 - Math.pow(1 + tauxMensuel, -nbMensualites)) / tauxMensuel;
-    const rendementSouhaite = (12 / (0.35 * part1)) * 100;
+    // Utilise la valeur d'endettement max du nouvel input
+    const rendementSouhaite = (12 / (endettementMax * part1)) * 100;
     
     // Calculate the target price to achieve the desired return.
     const prixCibleRendement = rendementSouhaite > 0 && loyer > 0 ? (loyer * 12) / (rendementSouhaite / 100) : 0;
     const reductionCible = prix > 0 ? ((prix - prixCibleRendement) / prix) * 100 : 0;
     
-    // Capacity to borrow based on rental income, considering the 80% rule for debt calculation.
-    const capaciteEmpruntLocative = 0.35 * (0.8 * loyer);
+    // Capacity to borrow based on rental income, using the new input value
+    const capaciteEmpruntLocative = endettementMax * (loyerPrisEnCompte * loyer);
 
     // D. Combined Financial Analysis
     // Calculates the remaining borrowing capacity after the project's monthly payment.
@@ -134,8 +139,8 @@ function calculate() {
     const denominateurDette = loyer + salaire;
     const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
     
-    // Calculates the maximum purchase price while respecting a 35% debt ratio.
-    const mensualiteCible = (0.35 * denominateurDette) - mensualiteActuel;
+    // Calculates the maximum purchase price while respecting the new debt ratio.
+    const mensualiteCible = (endettementMax * denominateurDette) - mensualiteActuel;
     let prixAcceptable = 0;
     if (mensualiteCible > 0 && facteurPMT > 0) {
         prixAcceptable = mensualiteCible / facteurPMT;
