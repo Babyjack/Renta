@@ -1,50 +1,44 @@
 /*
- * Full CSS for the Real Estate Calculator
- * This file combines the "Glossy Touch" aesthetic with best practices for layout and alignment.
- */
-
-/*
  * General Styles
  * Defines the dark, glossy background and default text colors for a modern, high-contrast look.
  */
 body {
-    font-family: 'Poppins', sans-serif; /* A clean, modern font similar to the example */
-    /* A dark, elegant gradient background from the reference site */
+    font-family: 'Poppins', sans-serif;
     background: linear-gradient(145deg, #1d2136 0%, #292d42 100%);
-    color: #f1f1f1; /* Light text for readability on a dark background */
+    color: #f1f1f1;
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 3rem 1rem;
     min-height: 100vh;
     box-sizing: border-box;
-    margin: 0; /* Ensures the body has no default margin, providing a full-width background */
+    margin: 0;
+    /* Ensure no maximum width is set on the body */
 }
 
 h1, h2 {
     text-align: center;
-    color: #fff; /* Pure white for prominent headings */
+    color: #fff;
     font-weight: 600;
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* A subtle text shadow for depth */
-    margin-top: 0; /* Removes default top margin from h1 for better alignment */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 0;
 }
 
 /*
  * Container and Layout
- * This is the core of the "Glassmorphism" effect. The containers are semi-transparent with a blurred background filter.
+ * The central card-like containers with a maximum width to prevent them from becoming too wide on large screens.
  */
 .container {
-    background-color: rgba(255, 255, 255, 0.08); /* Semi-transparent white background */
-    backdrop-filter: blur(10px); /* The "frosted glass" effect */
-    border: 1px solid rgba(255, 255, 255, 0.15); /* A light, subtle border */
-    border-radius: 1.5rem; /* Larger, softer corners */
-    /* A subtle, layered shadow to give the cards a floating appearance */
+    background-color: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1.5rem;
     box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     padding: 2rem;
-    width: 100%;
-    max-width: 550px;
+    width: 90%; /* Use a relative width to adapt to the screen size */
+    max-width: 550px; /* Keep a max-width to prevent stretching on large monitors */
     margin-bottom: 2rem;
     transition: transform 0.2s ease-in-out;
 }
@@ -56,7 +50,7 @@ h1, h2 {
 
 /*
  * Form Elements
- * Styles for inputs and labels adapted for the dark, glossy theme.
+ * Use percentage or viewport units for elements that need to fill the width.
  */
 .input-group {
     margin-bottom: 1.5rem;
@@ -65,24 +59,23 @@ h1, h2 {
 label {
     display: block;
     margin-bottom: 0.75rem;
-    color: #e0e0e0; /* A light gray for labels */
+    color: #e0e0e0;
     font-weight: 500;
     font-size: 0.95rem;
 }
 
 input[type="number"] {
-    width: 100%;
+    width: 100%; /* Ensures the input fills the width of its parent container */
     padding: 1rem;
-    border: 1px solid rgba(255, 255, 255, 0.2); /* A light border for inputs */
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 0.75rem;
     font-size: 1rem;
     color: #fff;
-    background-color: rgba(255, 255, 255, 0.05); /* Very subtle transparent input background */
+    background-color: rgba(255, 255, 255, 0.05);
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* A clean, vivid focus state with a glow effect */
 input[type="number"]:focus {
     outline: none;
     border-color: rgba(135, 179, 255, 0.6);
@@ -91,7 +84,6 @@ input[type="number"]:focus {
 
 /*
  * Results Display
- * Bold, spaced-out results for better scanning on the glossy cards.
  */
 .results {
     margin-top: 1.5rem;
@@ -106,7 +98,7 @@ input[type="number"]:focus {
 }
 
 .result-item:not(:last-child) {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Very subtle separator */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .result-item .label {
@@ -117,25 +109,24 @@ input[type="number"]:focus {
 .result-item .value {
     font-weight: 700;
     font-size: 1.3rem;
-    color: #fff; /* Main values are bright white */
+    color: #fff;
     transition: color 0.3s ease;
 }
 
 /*
  * Specific Result Styling
- * Consistent color palette for status indicators adapted for a dark background.
  */
-.cashflow-positive { color: #84cc16 !important; } /* A bright, energetic green */
-.cashflow-negative { color: #f43f5e !important; } /* A soft red */
+.cashflow-positive { color: #84cc16 !important; }
+.cashflow-negative { color: #f43f5e !important; }
 
 .highlight {
-    background-color: rgba(135, 179, 255, 0.1); /* A subtle blue highlight for the glossy theme */
+    background-color: rgba(135, 179, 255, 0.1);
     padding: 1rem;
     margin: 0 -2rem;
     border-radius: 0.5rem;
 }
 
-.highlight .value { color: #a5b4fc; } /* A light, vibrant blue for the highlight value */
+.highlight .value { color: #a5b4fc; }
 .reduction-value { color: #f43f5e !important; }
 
 .error-message {
@@ -144,4 +135,11 @@ input[type="number"]:focus {
     margin-top: 1.5rem;
     font-weight: 500;
     display: none;
+}
+
+/* Media Query for smaller screens to adjust padding */
+@media (max-width: 600px) {
+    .container {
+        padding: 1.5rem 1rem;
+    }
 }
