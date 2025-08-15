@@ -6,178 +6,154 @@
     <title>Calculateur d'Investissement Immobilier</title>
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap');
-
         :root {
-            --color-primary: #1C2B3A; /* Dark Slate Blue */
-            --color-secondary: #E3D9C0; /* Muted Gold */
-            --color-accent: #2E86AB; /* Deep Blue */
-            --color-text: #333;
-            --color-light-bg: #F5F3ED; /* Light Cream */
-            --color-card-bg: #FFFFFF;
-            --color-positive: #28a745;
-            --color-negative: #dc3545;
+            --background-dark: #1e1e1e;
+            --container-dark: #2d2d2d;
+            --text-light: #f5f5f5;
+            --text-secondary: #aaaaaa;
+            --accent-gold: #ffc107;
+            --input-bg-dark: #3a3a3a;
+            --border-dark: #444444;
+            --shadow-dark: rgba(0, 0, 0, 0.4);
+            --positive-green: #28a745;
+            --negative-red: #dc3545;
         }
 
         body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--color-light-bg);
-            color: var(--color-text);
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-
-        .hero {
-            width: 100%;
-            text-align: center;
-            padding: 4rem 1rem;
-            background-color: var(--color-primary);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: 1.5px;
-            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: background-color 0.3s ease;
         }
 
         .container {
-            background-color: var(--color-card-bg);
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            background-color: var(--container-dark);
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px var(--shadow-dark);
             width: 100%;
-            max-width: 650px;
-            margin: 2rem 1rem;
-            box-sizing: border-box;
-            border: 1px solid rgba(0, 0, 0, 0.05);
+            max-width: 550px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border-dark);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px var(--shadow-dark);
         }
 
-        h2 {
-            font-family: 'Playfair Display', serif;
+        h1, h2 {
             text-align: center;
-            color: var(--color-primary);
+            color: var(--accent-gold);
             margin-bottom: 1.5rem;
-            font-size: 1.8rem;
-            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
         }
 
         .input-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         label {
             display: block;
-            margin-bottom: 0.6rem;
-            color: var(--color-primary);
-            font-weight: 700;
-            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
         }
 
         input[type="number"] {
             width: 100%;
-            padding: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 10px;
+            padding: 0.75rem;
+            border: 1px solid var(--border-dark);
+            border-radius: 8px;
             font-size: 1rem;
+            background-color: var(--input-bg-dark);
+            color: var(--text-light);
             box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            color: var(--color-text);
-            background-color: #f9f9f9;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
-
+        
         input[type="number"]:focus {
             outline: none;
-            border-color: var(--color-accent);
-            box-shadow: 0 0 0 4px rgba(46, 134, 171, 0.2);
-            background-color: #fff;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.25);
+        }
+        
+        input::placeholder {
+            color: var(--text-secondary);
+            opacity: 0.7;
         }
 
         .results {
-            margin-top: 2rem;
+            margin-top: 1rem;
         }
-
+        
         .result-item {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 0;
+            padding: 0.85rem 0;
             font-size: 1.1rem;
-            font-weight: 400;
-            border-bottom: 1px solid #eee;
         }
 
-        .result-item:last-of-type {
-            border-bottom: none;
+        .result-item:not(:last-child) {
+            border-bottom: 1px solid var(--border-dark);
         }
         
+        hr {
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0), var(--border-dark), rgba(255, 255, 255, 0));
+            margin: 1rem 0;
+        }
+
         .result-item .label {
-            color: var(--color-primary);
+            color: var(--text-light);
+            font-weight: 400;
         }
 
         .result-item .value {
             font-weight: 700;
-            color: var(--color-primary);
+            color: var(--accent-gold);
             font-size: 1.2rem;
         }
         
-        .cashflow-positive { color: var(--color-positive) !important; }
-        .cashflow-negative { color: var(--color-negative) !important; }
+        .cashflow-positive { color: var(--positive-green) !important; }
+        .cashflow-negative { color: var(--negative-red) !important; }
+
+        .reduction-value { color: var(--negative-red) !important; }
 
         .highlight {
-            background-color: #F5F3ED; /* Light Cream */
-            padding: 1rem 1.5rem;
-            margin: 1.5rem -2.5rem 0 -2.5rem;
-            border-radius: 0 0 16px 16px;
-            border-top: 2px solid rgba(0, 0, 0, 0.05);
+            background-color: var(--input-bg-dark);
+            padding-left: 1rem;
+            padding-right: 1rem;
+            margin: 0 -1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-dark);
         }
 
-        .highlight .value { 
-            font-size: 1.4rem;
-            color: var(--color-accent) !important; 
-        }
-
-        .reduction-value { color: var(--color-negative) !important; }
-
-        hr {
-            border: 0;
-            height: 1px;
-            background: rgba(0, 0, 0, 0.1);
-            margin: 2rem 0;
-        }
+        .highlight .value { color: var(--text-light); }
+        .highlight .label strong { color: var(--accent-gold); }
 
         .error-message {
-            color: var(--color-negative);
+            color: var(--negative-red);
             text-align: center;
-            margin-top: 1.5rem;
-            font-weight: 700;
+            margin-top: 1rem;
+            font-weight: 500;
             display: none;
-            font-size: 1rem;
-        }
-
-        /* Mobile adjustments */
-        @media (max-width: 768px) {
-            h1 { font-size: 2rem; }
-            .hero { padding: 3rem 1rem; }
-            .container { padding: 2rem 1.5rem; margin: 1.5rem 0.5rem; }
-            .highlight { margin: 1.5rem -1.5rem 0 -1.5rem; }
         }
     </style>
 </head>
 <body>
-    <div class="hero">
-        <h1>Calculateur Immobilier 🏡</h1>
-    </div>
-
+    <h1>Calculateur Immobilier 🏡</h1>
+    
     <div class="container">
-        <h2>Projet d'Investissement</h2>
+        <h2>Projet Immobilier</h2>
         <div class="input-group">
             <label for="prix">Prix d'acquisition (€)</label>
             <input type="number" id="prix" placeholder="ex: 200000">
@@ -199,17 +175,17 @@
     <div class="container">
         <h2>Votre Situation Actuelle</h2>
         <div class="input-group">
-            <label for="salaire">Salaire et revenu mensuel net (€)</label>
+            <label for="salaire">Salaire et revenu actuel mensuel net (€)</label>
             <input type="number" id="salaire" value="0">
         </div>
         <div class="input-group">
-            <label for="mensualiteActuel">Mensualités actuelles (crédits, LLD, loyer RP...)</label>
+            <label for="mensualiteActuel">Mensualités actuelles conservées (crédits, LLD, loyer RP...)</label>
             <input type="number" id="mensualiteActuel" value="0">
         </div>
     </div>
     
     <div class="container">
-        <h2>Analyse Complète</h2>
+        <h2>Analyse Complète du Projet</h2>
          <div class="results">
             <div class="result-item" id="itemEndettementActuel">
                 <span class="label">Endettement propre :</span>
@@ -263,7 +239,7 @@
                     <span class="label">Rendement Cible (selon crédit) :</span>
                     <span class="value" id="outputRendementSouhaite">0,00 %</span>
                 </div>
-                <div class="result-item" id="itemPrixCible">
+                <div class="result-item highlight" id="itemPrixCible">
                     <span class="label"><strong>Prix Cible (pour rendement) :</strong></span>
                     <span class="value" id="outputPrixCible">0,00 €</span>
                 </div>
