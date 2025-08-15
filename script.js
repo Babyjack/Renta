@@ -1,163 +1,208 @@
-// Get a reference to all the output elements and input fields by their IDs
+/*
+ * SCRIPT.JS
+ * This file handles all the logic for the real estate investment calculator.
+ * It reads user input, performs calculations, and updates the UI.
+ */
+
+// --- DOM ELEMENTS ---
+// Get all number input elements to listen for changes.
+const inputs = document.querySelectorAll('input[type="number"]');
+
+// Get all output elements to display results.
 const outputElements = {
-    endettementPropre: document.getElementById('outputEndettementPropre'),
+    endettementActuel: document.getElementById('outputEndettementActuel'),
+    endettementProjetSeul: document.getElementById('outputEndettementProjetSeul'),
     endettementTotal: document.getElementById('outputEndettementTotal'),
-    capaciteEmpruntPropre: document.getElementById('outputCapaciteEmpruntPropre'),
-    capaciteEmpruntLocative: document.getElementById('outputCapaciteEmpruntLocative'),
-    mensualiteProjet: document.getElementById('outputMensualiteProjet'),
+    capacite: document.getElementById('outputCapacite'),
+    capaciteLocative: document.getElementById('outputCapaciteLocative'),
+    mensualite: document.getElementById('outputMensualite'),
     capaciteMensualite: document.getElementById('outputCapaciteMensualite'),
-    cashflowBrut: document.getElementById('outputCashflowBrut'),
-    rendementBrut: document.getElementById('outputRendementBrut'),
-    rendementCible: document.getElementById('outputRendementCible'),
-    prixCible: document.getElementById('outputPrixCible')
+    cashflow: document.getElementById('outputCashflow'),
+    rendement: document.getElementById('outputRendement'),
+    rendementSouhaite: document.getElementById('outputRendementSouhaite'),
+    prixCible: document.getElementById('outputPrixCible'),
+    reductionCible: document.getElementById('outputReductionCible'),
+    prixAcceptable: document.getElementById('outputPrixAcceptable'),
+    reductionMinimum: document.getElementById('outputReductionMinimum'),
 };
 
-// Get references to the conditional containers that can be hidden or shown
+// Get container elements that are conditionally shown/hidden.
 const conditionalContainers = {
     locatifResults: document.getElementById('locatifResults'),
     locatifResults2: document.getElementById('locatifResults2'),
     locatifResults3: document.getElementById('locatifResults3'),
     locatifResults4: document.getElementById('locatifResults4'),
-    situationResults: document.getElementById('situationResults') // This is the container we will modify
+    reductionResults: document.getElementById('reductionResults'),
+    reductionResults2: document.getElementById('reductionResults2'),
+    itemPrixCible: document.getElementById('itemPrixCible'),
+    itemReductionCible: document.getElementById('itemReductionCible'),
 };
 
-const inputElements = {
-    prix: document.getElementById('prix'),
-    loyer: document.getElementById('loyer'),
-    tauxAnnuel: document.getElementById('tauxAnnuel'),
-    nbMensualites: document.getElementById('nbMensualites'),
-    salaireActuel: document.getElementById('salaireActuel'),
-    mensualitesActuelles: document.getElementById('mensualitesActuelles')
-};
+const errorElement = document.getElementById('error');
 
-// Get a reference to the error message element
-const errorElement = document.getElementById('error-message');
+// --- DATA MANAGEMENT ---
+// An array of input IDs to easily save and load data from local storage.
+const inputIds = ['prix', 'loyer', 'taux', 'duree', 'salaire', 'mensualiteActuel'];
 
-// Define a currency formatter for euros
-const currencyFormatter = new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-});
+/**
+ * Saves the current value of each input to the browser's local storage.
+ * This function ensures that the user's data persists between sessions.
+ */
+function saveData() {
+    inputIds.forEach(id => {
+        const value = document.getElementById(id).value;
+        localStorage.setItem(id, value);
+    });
+}
 
-// A debounced function to call the calculate function after a small delay
-const debouncedCalculate = debounce(calculate, 300);
+/**
+ * Loads saved data from local storage and populates the input fields.
+ * This is called on page load to restore the previous state.
+ */
+function loadData() {
+    inputIds.forEach(id => {
+        const savedValue = localStorage.getItem(id);
+        if (savedValue !== null) {
+            document.getElementById(id).value = savedValue;
+        }
+    });
+}
 
-// Add event listeners to all input fields to trigger the calculation
-Object.values(inputElements).forEach(input => {
-    input.addEventListener('input', debouncedCalculate);
-});
-
-// Main calculation function
+// --- CALCULATION LOGIC ---
+/**
+ * Main calculation function. It validates inputs, performs all financial calculations,
+ * and updates the UI with the results.
+ */
 function calculate() {
-    // 1. Get input values and validate them
-    const prix = parseFloat(inputElements.prix.value);
-    const loyer = parseFloat(inputElements.loyer.value);
-    const tauxAnnuel = parseFloat(inputElements.tauxAnnuel.value);
-    const nbMensualites = parseFloat(inputElements.nbMensualites.value);
-    const salaireActuel = parseFloat(inputElements.salaireActuel.value);
-    const mensualitesActuelles = parseFloat(inputElements.mensualitesActuelles.value);
+    // 1. Get and parse input values.
+    // parseFloat is used for decimals, parseInt for integers.
+    const salaire = parseFloat(document.getElementById('salaire').value);
+    const mensualiteActuel = parseFloat(document.getElementById('mensualiteActuel').value);
+    const prix = parseFloat(document.getElementById('prix').value);
+    const loyer = parseFloat(document.getElementById('loyer').value);
+    const tauxAnnuel = parseFloat(document.getElementById('taux').value);
+    const nbMensualites = parseInt(document.getElementById('duree').value, 10);
 
-    // Initial validation check to hide all results if any primary input is invalid
-    if (isNaN(prix) || prix <= 0 || isNaN(tauxAnnuel) || tauxAnnuel <= 0 || isNaN(nbMensualites) || nbMensualites <= 0) {
+    // 2. Input Validation
+    // This check ensures all inputs are valid numbers and greater than zero where required.
+    // If validation fails, show an error and hide all result fields.
+    if (isNaN(salaire) || isNaN(mensualiteActuel) || isNaN(prix) || isNaN(loyer) || isNaN(tauxAnnuel) || isNaN(nbMensualites) ||
+        salaire < 0 || mensualiteActuel < 0 || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
         errorElement.style.display = 'block';
         Object.values(outputElements).forEach(el => el.textContent = '...');
         Object.values(conditionalContainers).forEach(el => el.style.display = 'none');
-        // We now explicitly show the situationResults container, but with blank values
-        conditionalContainers.situationResults.style.display = 'block';
         return;
-    } else {
-        errorElement.style.display = 'none';
     }
+    // Hide the error message if all inputs are valid.
+    errorElement.style.display = 'none';
 
-    // 2. Calculations
-    const mensualiteProjet = calculateMensualiteProjet(prix, tauxAnnuel, nbMensualites);
-    const tauxEndettementAcceptable = 0.35; // 35%
-    const mensualiteMax = (salaireActuel || 0) * tauxEndettementAcceptable;
-    const mensualiteRestante = Math.max(0, mensualiteMax - (mensualitesActuelles || 0));
+    // 3. Calculation Constants & Utilities
+    const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
+    const tauxMensuel = tauxAnnuel / 100 / 12;
 
-    // A. Calculations for the project's debt
-    const endettementPropreTaux = mensualiteProjet / Math.max(1, salaireActuel || 0);
+    // 4. Financial Calculations
+    // A. Current Situation
+    const endettementActuelTaux = salaire > 0 ? (mensualiteActuel / salaire) : 0;
+    const capaciteEndettement = 0.35 * salaire;
 
-    // B. Conditional calculations for rental projects
+    // B. Project Metrics (Loan details)
+    // PMT factor for calculating the monthly mortgage payment.
+    const facteurPMT = (tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites)) / (Math.pow(1 + tauxMensuel, nbMensualites) - 1);
+    const mensualiteProjet = prix * facteurPMT;
+
+    // C. Rental-related Calculations
+    const cashflow = loyer - mensualiteProjet;
+    const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / loyer) : 0;
+    const rendementBrut = prix > 0 && loyer > 0 ? ((loyer * 12) / prix) * 100 : 0;
+    
+    // Formula for calculating the desired return rate based on the loan.
+    const part1 = (1 - Math.pow(1 + tauxMensuel, -nbMensualites)) / tauxMensuel;
+    const rendementSouhaite = (12 / (0.35 * part1)) * 100;
+    
+    // Calculate the target price to achieve the desired return.
+    const prixCibleRendement = rendementSouhaite > 0 && loyer > 0 ? (loyer * 12) / (rendementSouhaite / 100) : 0;
+    const reductionCible = prix > 0 ? ((prix - prixCibleRendement) / prix) * 100 : 0;
+    
+    // Capacity to borrow based on rental income, considering the 80% rule for debt calculation.
+    const capaciteEmpruntLocative = 0.35 * (0.8 * loyer);
+
+    // D. Combined Financial Analysis
+    // Calculates the remaining borrowing capacity after the project's monthly payment.
+    const capaciteMensualite = capaciteEndettement + capaciteEmpruntLocative - mensualiteProjet - mensualiteActuel;
+
+    // E. Negotiation Calculations
+    const denominateurDette = loyer + salaire;
+    const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
+    
+    // Calculates the maximum purchase price while respecting a 35% debt ratio.
+    const mensualiteCible = (0.35 * denominateurDette) - mensualiteActuel;
+    let prixAcceptable = 0;
+    if (mensualiteCible > 0 && facteurPMT > 0) {
+        prixAcceptable = mensualiteCible / facteurPMT;
+    }
+    const reductionMinimum = prix > 0 ? ((prix - prixAcceptable) / prix) * 100 : 0;
+
+    // 5. UI Updates
+    
+    // A. Update permanent results
+    outputElements.mensualite.textContent = currencyFormatter.format(mensualiteProjet);
+    outputElements.endettementActuel.textContent = `${(endettementActuelTaux * 100).toFixed(1).replace('.', ',')} %`;
+    outputElements.capacite.textContent = currencyFormatter.format(Math.max(0, capaciteEndettement));
+    
+    // Update the 'Capacité-Mensualité' value and apply a color class based on its sign.
+    outputElements.capaciteMensualite.textContent = currencyFormatter.format(capaciteMensualite);
+    outputElements.capaciteMensualite.className = `value ${capaciteMensualite >= 0 ? 'cashflow-positive' : 'cashflow-negative'}`;
+
+    // Always display 'endettementTotal'
+    outputElements.endettementTotal.textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
+
+    // B. Conditionally show/hide rental-related results.
     const isRentalProject = loyer > 0;
-    let capaciteEmpruntLocative = 0;
-    let cashflowBrut = 0;
-    let rendementBrut = 0;
-    let rendementCible = 0;
-    let prixCible = 0;
-
-    if (isRentalProject) {
-        capaciteEmpruntLocative = calculateCapaciteEmprunt(
-            mensualiteMax,
-            mensualitesActuelles,
-            loyer,
-            tauxAnnuel,
-            nbMensualites
-        );
-        cashflowBrut = loyer - mensualiteProjet;
-        rendementBrut = (loyer * 12) / prix;
-
-        // Calculate a target yield based on a reasonable return
-        const rendementObjectif = 0.05; // 5%
-        prixCible = (loyer * 12) / rendementObjectif;
-    }
-
-    // C. Update the display for conditional containers
     conditionalContainers.locatifResults.style.display = isRentalProject ? 'block' : 'none';
     conditionalContainers.locatifResults2.style.display = isRentalProject ? 'block' : 'none';
     conditionalContainers.locatifResults3.style.display = isRentalProject ? 'block' : 'none';
     conditionalContainers.locatifResults4.style.display = isRentalProject ? 'block' : 'none';
+    
+    if (isRentalProject) {
+        outputElements.cashflow.textContent = currencyFormatter.format(cashflow);
+        outputElements.endettementProjetSeul.textContent = `${(endettementProjetSeulTaux * 100).toFixed(1).replace('.', ',')} %`;
+        outputElements.rendement.textContent = `${rendementBrut.toFixed(2).replace('.', ',')} %`;
+        outputElements.rendementSouhaite.textContent = `${rendementSouhaite.toFixed(2).replace('.', ',')} %`;
+        outputElements.capaciteLocative.textContent = currencyFormatter.format(capaciteEmpruntLocative);
 
-    // D. Calculations for total debt (always shown, but values depend on inputs)
-    const isSituationDataValid = !isNaN(salaireActuel) && !isNaN(mensualitesActuelles);
+        // Update cashflow color.
+        outputElements.cashflow.className = `value ${cashflow >= 0 ? 'cashflow-positive' : 'cashflow-negative'}`;
 
-    // This section no longer hides the container. It just updates the values.
-    conditionalContainers.situationResults.style.display = 'block';
-    if (isSituationDataValid) {
-        const endettementTotalTaux = (mensualiteProjet + mensualitesActuelles) / salaireActuel;
-        outputElements.endettementPropre.textContent = `${(endettementPropreTaux * 100).toFixed(1).replace('.', ',')} %`;
-        outputElements.endettementTotal.textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
-    } else {
-        // Clear the values if inputs are not valid
-        outputElements.endettementPropre.textContent = '...';
-        outputElements.endettementTotal.textContent = '...';
+        // Conditionally show/hide target price and reduction.
+        const shouldShowTargetPrice = prix >= prixCibleRendement;
+        conditionalContainers.itemPrixCible.style.display = shouldShowTargetPrice ? 'flex' : 'none';
+        conditionalContainers.itemReductionCible.style.display = shouldShowTargetPrice ? 'flex' : 'none';
+        
+        if (shouldShowTargetPrice) {
+            outputElements.prixCible.textContent = currencyFormatter.format(prixCibleRendement);
+            outputElements.reductionCible.textContent = `${Math.max(0, reductionCible).toFixed(1).replace('.', ',')} %`;
+        }
     }
 
-    // E. Update the display with calculated values
-    outputElements.capaciteEmpruntPropre.textContent = currencyFormatter.format(mensualiteRestante);
-    outputElements.capaciteEmpruntLocative.textContent = currencyFormatter.format(capaciteEmpruntLocative);
-    outputElements.mensualiteProjet.textContent = currencyFormatter.format(mensualiteProjet);
-    outputElements.capaciteMensualite.textContent = currencyFormatter.format(mensualiteRestante - mensualiteProjet);
-    outputElements.cashflowBrut.textContent = currencyFormatter.format(cashflowBrut);
-    outputElements.rendementBrut.textContent = `${(rendementBrut * 100).toFixed(1).replace('.', ',')} %`;
-    outputElements.rendementCible.textContent = `${(rendementObjectif * 100).toFixed(1).replace('.', ',')} %`;
-    outputElements.prixCible.textContent = currencyFormatter.format(prixCible);
+    // C. Conditionally show/hide negotiation results.
+    const isNegotiationRequired = prix > prixAcceptable;
+    conditionalContainers.reductionResults.style.display = isNegotiationRequired ? 'block' : 'none';
+    conditionalContainers.reductionResults2.style.display = isNegotiationRequired ? 'block' : 'none';
 
-    // 3. Helper Functions
-    // Function to calculate monthly payment
-    function calculateMensualiteProjet(capital, tauxAnnuel, dureeMois) {
-        if (tauxAnnuel === 0) return capital / dureeMois;
-        const tauxMensuel = tauxAnnuel / 1200;
-        return capital * tauxMensuel / (1 - Math.pow(1 + tauxMensuel, -dureeMois));
+    if (isNegotiationRequired) {
+        outputElements.prixAcceptable.textContent = currencyFormatter.format(prixAcceptable);
+        outputElements.reductionMinimum.textContent = `${Math.max(0, reductionMinimum).toFixed(1).replace('.', ',')} %`;
     }
-
-    // Function to calculate borrowing capacity based on remaining monthly payment
-    function calculateCapaciteEmprunt(mensualiteMax, mensualitesActuelles, loyer, tauxAnnuel, dureeMois) {
-        const tauxMensuel = tauxAnnuel / 1200;
-        const mensualiteEmpruntMax = Math.max(0, mensualiteMax - mensualitesActuelles + (loyer * 0.7));
-        return mensualiteEmpruntMax / tauxMensuel * (1 - Math.pow(1 + tauxMensuel, -dureeMois));
-    }
+    
+    // Save the new data after a successful calculation.
+    saveData();
 }
 
-// Debounce function to limit how often a function is called
-function debounce(func, delay) {
-    let timeoutId;
-    return function(...args) {
-        clearTimeout(timeoutId);
-        timeoutId = setTimeout(() => {
-            func.apply(this, args);
-        }, delay);
-    };
-}
+// --- EVENT LISTENERS ---
+// Listen for input events on all number fields. This makes the calculation dynamic.
+inputs.forEach(input => input.addEventListener('input', calculate));
+
+// --- INITIALIZATION ---
+// Load saved data and perform the initial calculation when the page first loads.
+loadData();
+calculate();
