@@ -1,89 +1,87 @@
 /*
  * General Styles
- * Defines global rules, including a modern gradient background.
+ * Defines the global font, background, and text colors.
  */
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    /* Use a subtle linear gradient for a more modern, layered feel */
-    background: linear-gradient(135deg, #f0f2f5 0%, #e0e6ed 100%);
+    /* Using a professional, clean font stack */
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f6f9; /* A light, soft gray background */
+    color: #333; /* Dark gray for main text */
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    box-sizing: border-box;
-    /* Add a smooth transition for background changes, if any */
-    transition: background-color 0.3s ease;
+    padding: 2.5rem 1rem;
     min-height: 100vh;
+    box-sizing: border-box;
 }
 
 h1, h2 {
     text-align: center;
-    color: #1c2d41;
-    margin-bottom: 1.5rem;
-    /* Add a bit of spacing for better readability */
+    color: #1a202c; /* A very dark gray for headings */
+    font-weight: 600;
+    margin-bottom: 2rem;
     letter-spacing: -0.5px;
 }
 
 /*
  * Container and Layout
- * Styles for the main content blocks, with a more pronounced shadow and softer corners.
+ * The central card-like containers with refined shadows and borders.
  */
 .container {
     background-color: #ffffff;
-    padding: 1.5rem 2rem;
-    border-radius: 16px; /* Slightly larger border-radius for a softer look */
-    /* Use a more sophisticated box-shadow for a "floating" effect */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+    border-radius: 1rem; /* Softer, more modern rounded corners */
+    /* A more subtle and professional layered shadow */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 550px;
-    margin-bottom: 25px; /* Increase space between containers */
-    /* Add a subtle transition for hover effects */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-/* Add a subtle hover effect to containers */
+/* A slight lift effect on hover for interactivity */
 .container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15), 0 6px 18px rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 12px 20px rgba(0, 0, 0, 0.15);
 }
 
 /*
  * Form Elements
- * Styles for labels and number inputs with better focus states.
+ * Clean, consistent styling for inputs and labels.
  */
 .input-group {
-    margin-bottom: 1.25rem; /* Increased spacing between input groups */
+    margin-bottom: 1.5rem;
 }
 
 label {
     display: block;
-    margin-bottom: 0.6rem;
-    color: #495057;
-    font-weight: 600;
-    font-size: 0.95rem; /* Slightly smaller font size for a cleaner look */
+    margin-bottom: 0.75rem;
+    color: #555;
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 input[type="number"] {
     width: 100%;
-    padding: 0.85rem;
-    border: 1px solid #e2e8f0; /* Lighter border color */
-    border-radius: 10px; /* Softer corners for inputs */
+    padding: 0.9rem 1rem;
+    border: 1px solid #dcdfe6; /* A clean, light border */
+    border-radius: 0.5rem;
     font-size: 1rem;
+    background-color: #fcfdfe; /* Off-white input background */
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
-    background-color: #f8fafc; /* A very light background to distinguish it from the container */
 }
 
+/* A clean, vivid blue focus state */
 input[type="number"]:focus {
     outline: none;
-    border-color: #4d94ff;
-    /* Refined box-shadow for a more elegant focus ring */
-    box-shadow: 0 0 0 4px rgba(77, 148, 255, 0.2);
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
 /*
  * Results Display
- * Improved styling for the output sections.
+ * Bold, spaced-out results for better scanning.
  */
 .results {
     margin-top: 1.5rem;
@@ -93,67 +91,47 @@ input[type="number"]:focus {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.9rem 0;
+    padding: 1rem 0;
     font-size: 1.1rem;
-    /* Add a subtle transition for visual feedback on value changes */
-    transition: color 0.3s ease;
 }
 
 .result-item:not(:last-child) {
-    border-bottom: 1px solid #eef1f4; /* Lighter border color */
+    border-bottom: 1px solid #e5e7eb;
 }
 
 .result-item .label {
-    color: #343a40;
+    color: #4a5568;
+    font-weight: 400;
 }
 
 .result-item .value {
     font-weight: 700;
-    font-size: 1.25rem;
-    color: #007bff;
-    /* Add a subtle animation to grab attention on updates */
-    animation: fade-in 0.5s ease-out;
+    font-size: 1.3rem;
+    color: #1a202c; /* A strong color for the values */
+    transition: color 0.3s ease;
 }
 
 /*
  * Specific Result Styling
- * Color codes for positive/negative values and highlights.
+ * Consistent color palette for status indicators.
  */
-.cashflow-positive { color: #28a745 !important; }
-.cashflow-negative { color: #dc3545 !important; }
+.cashflow-positive { color: #10b981 !important; } /* A vibrant green */
+.cashflow-negative { color: #ef4444 !important; } /* A strong red */
 
 .highlight {
-    background-color: #e6f7ff;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin: 0 -1rem;
-    border-radius: 10px;
-    /* Add a subtle shadow to the highlight for depth */
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    background-color: #eff6ff; /* A lighter, more modern blue for the highlight */
+    padding: 1rem;
+    margin: 0 -2rem; /* Matches the container's padding for a full-width look */
+    border-radius: 0.5rem;
 }
 
-.highlight .value { color: #28a745; }
-.reduction-value { color: #dc3545 !important; }
+.highlight .value { color: #10b981; }
+.reduction-value { color: #ef4444 !important; }
 
 .error-message {
-    color: #dc3545;
+    color: #ef4444;
     text-align: center;
     margin-top: 1.5rem;
     font-weight: 500;
     display: none;
-}
-
-/*
- * Keyframe Animation
- * Defines the fade-in effect for updated values.
- */
-@keyframes fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
 }
