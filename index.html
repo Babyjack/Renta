@@ -254,30 +254,27 @@
                 salaire < 0 || mensualiteActuel < 0 || prix <= 0 || loyer < 0 || tauxAnnuel <= 0 || nbMensualites <= 0) {
                 errorElement.style.display = 'block';
                 document.querySelectorAll('.value').forEach(el => el.textContent = '...');
-                // Cache les blocs si les valeurs ne sont pas valides
                 document.getElementById('locatifResults').style.display = 'none';
                 document.getElementById('reductionResults').style.display = 'none';
+                document.getElementById('itemEndettementProjet').style.display = 'none';
+                document.getElementById('itemCapaciteLocative').style.display = 'none';
+                document.getElementById('itemEndettementTotal').style.display = 'none';
                 return;
             }
             errorElement.style.display = 'none';
 
             const currencyFormatter = new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' });
             
-            // Calculs de votre situation actuelle
             const endettementActuelTaux = salaire > 0 ? (mensualiteActuel / salaire) : 0;
             const capaciteEndettement = 0.35 * salaire - mensualiteActuel;
             
-            // Calculs du projet immobilier
             const tauxMensuel = tauxAnnuel / 100 / 12;
             const facteurPMT = (tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites)) / (Math.pow(1 + tauxMensuel, nbMensualites) - 1);
             const mensualiteProjet = prix * facteurPMT;
             
-            // --- NOUVEAU CALCUL : Capacité d'emprunt locative ---
             const capaciteEmpruntLocative = 0.35 * (0.8 * loyer);
+            const capaciteMensualite = capaciteEndettement + capaciteEmpruntLocative - mensualiteProjet;
             
-            // --- NOUVELLE FORMULE : Capacité - Mensualité ---
-            const capaciteMensualite = capaciteEndettement + capaciteEmpruntLocative - mensualiteActuel - mensualiteProjet;
-
             const cashflow = loyer - mensualiteProjet;
             const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / (loyer * 0.80)) : 0;
             const denominateurDette = loyer * 0.80 + salaire;
@@ -297,21 +294,22 @@
             
             const reductionCible = prix > 0 ? ((prix - prixCibleRendement) / prix) * 100 : 0;
 
-            // Mise à jour des affichages
+            // Mise à jour de l'affichage
             document.getElementById('outputMensualite').textContent = currencyFormatter.format(mensualiteProjet);
             
             const capaciteMensualiteEl = document.getElementById('outputCapaciteMensualite');
             capaciteMensualiteEl.textContent = currencyFormatter.format(capaciteMensualite);
+            // Appliquer la classe 'cashflow-negative' si le résultat est < 0
             capaciteMensualiteEl.className = `value ${capaciteMensualite < 0 ? 'cashflow-negative' : 'cashflow-positive'}`;
 
 
-            // Affichage conditionnel des blocs
+            // Affichage conditionnel des blocs selon le revenu locatif
             if (loyer > 0) {
                 document.getElementById('locatifResults').style.display = 'block';
                 document.getElementById('itemEndettementProjet').style.display = 'flex';
                 document.getElementById('itemCapaciteLocative').style.display = 'flex';
                 document.getElementById('itemEndettementTotal').style.display = 'flex';
-
+                
                 document.getElementById('outputEndettementProjetSeul').textContent = `${(endettementProjetSeulTaux * 100).toFixed(1).replace('.', ',')} %`;
                 
                 const cashflowEl = document.getElementById('outputCashflow');
@@ -340,7 +338,6 @@
                 document.getElementById('reductionResults').style.display = 'none';
             }
         
-            // Ces résultats sont toujours affichés car ils sont dans la section "Votre Situation Actuelle"
             document.getElementById('outputEndettementActuel').textContent = `${(endettementActuelTaux * 100).toFixed(1).replace('.', ',')} %`;
             document.getElementById('outputCapacite').textContent = currencyFormatter.format(Math.max(0, capaciteEndettement));
         
