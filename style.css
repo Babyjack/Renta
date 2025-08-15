@@ -1,6 +1,6 @@
 /*
  * Full CSS for the Real Estate Calculator
- * This version corrects the alignment and responsive issues while maintaining the "Glossy Touch" aesthetic.
+ * This version corrects the text wrapping issue by applying a single dynamic font size to all result items.
  */
 
 /*
@@ -17,7 +17,7 @@ body {
     min-height: 100vh;
     box-sizing: border-box;
     margin: 0;
-    overflow-x: hidden; /* This prevents horizontal scrolling */
+    overflow-x: hidden;
 }
 
 h1, h2 {
@@ -28,7 +28,6 @@ h1, h2 {
     letter-spacing: -0.5px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     margin-top: 0;
-    /* Corrects alignment by ensuring headings don't have a specific width */
     max-width: 100%;
 }
 
@@ -98,7 +97,8 @@ input[type="number"]:focus {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 0;
-    font-size: 1.1rem;
+    /* Correction: Ensures all text within result items has the same font size and adapts */
+    font-size: clamp(0.7rem, 2vw, 1.1rem);
 }
 
 .result-item:not(:last-child) {
@@ -112,7 +112,6 @@ input[type="number"]:focus {
 
 .result-item .value {
     font-weight: 700;
-    font-size: 1.3rem;
     color: #fff;
     transition: color 0.3s ease;
 }
