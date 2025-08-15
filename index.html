@@ -272,19 +272,22 @@
             const facteurPMT = (tauxMensuel * Math.pow(1 + tauxMensuel, nbMensualites)) / (Math.pow(1 + tauxMensuel, nbMensualites) - 1);
             const mensualiteProjet = prix * facteurPMT;
             
-            const capaciteEmpruntLocative = 0.35 * (0.8 * loyer);
+            const loyerAbattu = loyer * 0.80;
+            const capaciteEmpruntLocative = 0.35 * loyerAbattu;
             const capaciteMensualite = capaciteEndettement + capaciteEmpruntLocative - mensualiteProjet;
             
             const cashflow = loyer - mensualiteProjet;
-            const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / (loyer * 0.80)) : 0;
-            const denominateurDette = loyer * 0.80 + salaire;
+            const endettementProjetSeulTaux = loyer > 0 ? (mensualiteProjet / loyerAbattu) : 0;
+            const denominateurDette = loyerAbattu + salaire;
             const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
             
             let prixAcceptable = 0;
-            const mensualiteCible = (0.35 * denominateurDette) - mensualiteActuel;
+            // Correction ici : la mensualité cible est la capacité d'emprunt totale, qui est la somme de la capacité d'emprunt propre et locative.
+            const mensualiteCible = capaciteEndettement + capaciteEmpruntLocative;
             if (mensualiteCible > 0 && facteurPMT > 0) {
                 prixAcceptable = mensualiteCible / facteurPMT;
             }
+            
             const reductionMinimum = prix > 0 ? ((prix - prixAcceptable) / prix) * 100 : 0;
             
             const rendementBrut = prix > 0 && loyer > 0 ? ((loyer * 12) / prix) * 100 : 0;
