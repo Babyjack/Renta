@@ -1,53 +1,55 @@
 /*
  * General Styles
- * Defines the global font, background, and text colors.
+ * Defines the dark, glossy background and default text colors for a modern, high-contrast look.
  */
 body {
-    /* Using a professional, clean font stack */
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f6f9; /* A light, soft gray background */
-    color: #333; /* Dark gray for main text */
+    font-family: 'Poppins', sans-serif; /* A clean, modern font similar to the example */
+    /* A dark, elegant gradient background from the reference site */
+    background: linear-gradient(145deg, #1d2136 0%, #292d42 100%);
+    color: #f1f1f1; /* Light text for readability on a dark background */
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2.5rem 1rem;
+    padding: 3rem 1rem;
     min-height: 100vh;
     box-sizing: border-box;
 }
 
 h1, h2 {
     text-align: center;
-    color: #1a202c; /* A very dark gray for headings */
+    color: #fff; /* Pure white for prominent headings */
     font-weight: 600;
     margin-bottom: 2rem;
     letter-spacing: -0.5px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* A subtle text shadow for depth */
 }
 
 /*
  * Container and Layout
- * The central card-like containers with refined shadows and borders.
+ * This is the core of the "Glassmorphism" effect. The containers are semi-transparent with a blurred background filter.
  */
 .container {
-    background-color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.08); /* Semi-transparent white background */
+    backdrop-filter: blur(10px); /* The "frosted glass" effect */
+    border: 1px solid rgba(255, 255, 255, 0.15); /* A light, subtle border */
+    border-radius: 1.5rem; /* Larger, softer corners */
+    /* A subtle, layered shadow to give the cards a floating appearance */
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
     padding: 2rem;
-    border-radius: 1rem; /* Softer, more modern rounded corners */
-    /* A more subtle and professional layered shadow */
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 10px 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 550px;
     margin-bottom: 2rem;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out;
 }
 
-/* A slight lift effect on hover for interactivity */
+/* Add a hover effect to lift the cards slightly */
 .container:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.08), 0 12px 20px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
 }
 
 /*
  * Form Elements
- * Clean, consistent styling for inputs and labels.
+ * Styles for inputs and labels adapted for the dark, glossy theme.
  */
 .input-group {
     margin-bottom: 1.5rem;
@@ -56,32 +58,33 @@ h1, h2 {
 label {
     display: block;
     margin-bottom: 0.75rem;
-    color: #555;
+    color: #e0e0e0; /* A light gray for labels */
     font-weight: 500;
     font-size: 0.95rem;
 }
 
 input[type="number"] {
     width: 100%;
-    padding: 0.9rem 1rem;
-    border: 1px solid #dcdfe6; /* A clean, light border */
-    border-radius: 0.5rem;
+    padding: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2); /* A light border for inputs */
+    border-radius: 0.75rem;
     font-size: 1rem;
-    background-color: #fcfdfe; /* Off-white input background */
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0.05); /* Very subtle transparent input background */
     box-sizing: border-box;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* A clean, vivid blue focus state */
+/* A clean, vivid focus state with a glow effect */
 input[type="number"]:focus {
     outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    border-color: rgba(135, 179, 255, 0.6);
+    box-shadow: 0 0 0 3px rgba(135, 179, 255, 0.3);
 }
 
 /*
  * Results Display
- * Bold, spaced-out results for better scanning.
+ * Bold, spaced-out results for better scanning on the glossy cards.
  */
 .results {
     margin-top: 1.5rem;
@@ -96,40 +99,40 @@ input[type="number"]:focus {
 }
 
 .result-item:not(:last-child) {
-    border-bottom: 1px solid #e5e7eb;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Very subtle separator */
 }
 
 .result-item .label {
-    color: #4a5568;
+    color: #e0e0e0;
     font-weight: 400;
 }
 
 .result-item .value {
     font-weight: 700;
     font-size: 1.3rem;
-    color: #1a202c; /* A strong color for the values */
+    color: #fff; /* Main values are bright white */
     transition: color 0.3s ease;
 }
 
 /*
  * Specific Result Styling
- * Consistent color palette for status indicators.
+ * Consistent color palette for status indicators adapted for a dark background.
  */
-.cashflow-positive { color: #10b981 !important; } /* A vibrant green */
-.cashflow-negative { color: #ef4444 !important; } /* A strong red */
+.cashflow-positive { color: #84cc16 !important; } /* A bright, energetic green */
+.cashflow-negative { color: #f43f5e !important; } /* A soft red */
 
 .highlight {
-    background-color: #eff6ff; /* A lighter, more modern blue for the highlight */
+    background-color: rgba(135, 179, 255, 0.1); /* A subtle blue highlight for the glossy theme */
     padding: 1rem;
-    margin: 0 -2rem; /* Matches the container's padding for a full-width look */
+    margin: 0 -2rem;
     border-radius: 0.5rem;
 }
 
-.highlight .value { color: #10b981; }
-.reduction-value { color: #ef4444 !important; }
+.highlight .value { color: #a5b4fc; } /* A light, vibrant blue for the highlight value */
+.reduction-value { color: #f43f5e !important; }
 
 .error-message {
-    color: #ef4444;
+    color: #f43f5e;
     text-align: center;
     margin-top: 1.5rem;
     font-weight: 500;
