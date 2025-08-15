@@ -1,0 +1,119 @@
+/*
+ * General Styles
+ * Defines global rules for the body and fonts.
+ */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h1, h2 {
+    text-align: center;
+    color: #1c2d41;
+    margin-bottom: 1.5rem;
+}
+
+/*
+ * Container and Layout
+ * Styles for the main content blocks.
+ */
+.container {
+    background-color: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 550px;
+    margin-bottom: 20px;
+}
+
+/*
+ * Form Elements
+ * Styles for labels and number inputs.
+ */
+.input-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+input[type="number"] {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #4d94ff;
+    box-shadow: 0 0 0 3px rgba(77, 148, 255, 0.25);
+}
+
+/*
+ * Results Display
+ * Styles for the output sections.
+ */
+.results {
+    margin-top: 1rem;
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.85rem 0;
+    font-size: 1.1rem;
+}
+
+.result-item:not(:last-child) {
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.result-item .label {
+    color: #343a40;
+}
+
+.result-item .value {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+/*
+ * Specific Result Styling
+ * Color codes for positive/negative values and highlights.
+ */
+.cashflow-positive { color: #28a745 !important; }
+.cashflow-negative { color: #dc3545 !important; }
+
+.highlight {
+    background-color: #e6f7ff;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: 0 -1rem;
+    border-radius: 8px;
+}
+
+.highlight .value { color: #28a745; }
+.reduction-value { color: #dc3545 !important; }
+
+.error-message {
+    color: #dc3545;
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: 500;
+    display: none;
+}
