@@ -153,9 +153,6 @@ function calculate() {
     outputElements.capaciteMensualite.textContent = currencyFormatter.format(capaciteMensualite);
     outputElements.capaciteMensualite.className = `value ${capaciteMensualite >= 0 ? 'cashflow-positive' : 'cashflow-negative'}`;
 
-    // Always display 'endettementTotal'
-    outputElements.endettementTotal.textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
-
     // B. Conditionally show/hide rental-related results.
     const isRentalProject = loyer > 0;
     conditionalContainers.locatifResults.style.display = isRentalProject ? 'block' : 'none';
@@ -190,6 +187,7 @@ function calculate() {
     conditionalContainers.reductionResults2.style.display = isNegotiationRequired ? 'block' : 'none';
 
     if (isNegotiationRequired) {
+        outputElements.endettementTotal.textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
         outputElements.prixAcceptable.textContent = currencyFormatter.format(prixAcceptable);
         outputElements.reductionMinimum.textContent = `${Math.max(0, reductionMinimum).toFixed(1).replace('.', ',')} %`;
     }
