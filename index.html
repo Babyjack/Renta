@@ -126,7 +126,7 @@
             <input type="number" id="taux" placeholder="ex: 3.5">
         </div>
         <div class="input-group">
-            <label for="duree">Nombre de mensualités de prêt/label>
+            <label for="duree">Nombre de mensualités</label>
             <input type="number" id="duree" value="300">
         </div>
     </div>
@@ -150,42 +150,46 @@
                 <span class="label">Endettement propre :</span>
                 <span class="value" id="outputEndettementActuel">0,0 %</span>
             </div>
-             <div class="result-item">
+            <div id="locatifResults" style="display:block;">
+                <div class="result-item">
                     <span class="label">Endettement projet :</span>
                     <span class="value" id="outputEndettementProjetSeul">0,0 %</span>
-             </div>
-             <div class="result-item">
+                </div>
+            </div>
+            <div id="reductionResults" style="display:block;">
+                <div class="result-item">
                     <span class="label">Endettement total :</span>
                     <span class="value" id="outputEndettementTotal">0,0 %</span>
-             </div>
-             <hr>
+                </div>
+            </div>
+            <hr>
             <div class="result-item" id="itemCapaciteMensuelle">
                 <span class="label">Capacité d'emprunt propre :</span>
                 <span class="value" id="outputCapacite">0,00 €</span>
             </div>
-            <div class="result-item">
-                    <span class="label">Capacité d'emprunt locative (80%) :</span>
+            <div id="locatifResults2" style="display:block;">
+                <div class="result-item">
+                    <span class="label">Capacité d'emprunt locative :</span>
                     <span class="value" id="outputCapaciteLocative">0,00 €</span>
+                </div>
             </div>
-            
             <div class="result-item">
-                <span class="label">Mensualité du projet immobilier :</span>
+                <span class="label">Mensualité du projet :</span>
                 <span class="value" id="outputMensualite">0,00 €</span>
             </div>
-             <hr>
-
+            <hr>
             <div class="result-item highlight">
-                <span class="label"><strong>Capacité - Mensualité :</strong></span>
+                <span class="label"><strong>Capacité-Mensualité :</strong></span>
                 <span class="value" id="outputCapaciteMensualite">0,00 €</span>
             </div>
-            <div id="locatifResults" style="display:block;">
+            <div id="locatifResults3" style="display:block;">
                 <div class="result-item">
-                    <span class="label"><strong>Cashflow Brut :</strong></span>
+                    <span class="label">Cashflow brut :</span>
                     <span class="value" id="outputCashflow">0,00 €</span>
                 </div>
-                <hr>
-                
-                
+            </div>
+            <hr>
+            <div id="locatifResults4" style="display:block;">
                 <div class="result-item">
                     <span class="label">Rendement Brut :</span>
                     <span class="value" id="outputRendement">0,00 %</span>
@@ -203,10 +207,8 @@
                     <span class="value reduction-value" id="outputReductionCible">0,0 %</span>
                 </div>
             </div>
-
-            <div id="reductionResults" style="display:block;">
-                <hr>
-                
+            <hr>
+            <div id="reductionResults2" style="display:block;">
                 <div class="result-item highlight">
                     <span class="label"><strong>Prix max (35% dette) :</strong></span>
                     <span class="value" id="outputPrixAcceptable">0,00 €</span>
@@ -255,7 +257,11 @@
                 errorElement.style.display = 'block';
                 document.querySelectorAll('.value').forEach(el => el.textContent = '...');
                 document.getElementById('locatifResults').style.display = 'none';
+                document.getElementById('locatifResults2').style.display = 'none';
+                document.getElementById('locatifResults3').style.display = 'none';
+                document.getElementById('locatifResults4').style.display = 'none';
                 document.getElementById('reductionResults').style.display = 'none';
+                document.getElementById('reductionResults2').style.display = 'none';
                 return;
             }
             errorElement.style.display = 'none';
@@ -290,8 +296,16 @@
 
             // Affichage des blocs si loyer > 0
             const locatifResultsEl = document.getElementById('locatifResults');
+            const locatifResultsEl2 = document.getElementById('locatifResults2');
+            const locatifResultsEl3 = document.getElementById('locatifResults3');
+            const locatifResultsEl4 = document.getElementById('locatifResults4');
+
             if (loyer > 0) {
                 locatifResultsEl.style.display = 'block';
+                locatifResultsEl2.style.display = 'block';
+                locatifResultsEl3.style.display = 'block';
+                locatifResultsEl4.style.display = 'block';
+
                 document.getElementById('outputCashflow').textContent = currencyFormatter.format(cashflow);
                 document.getElementById('outputEndettementProjetSeul').textContent = `${(endettementProjetSeulTaux * 100).toFixed(1).replace('.', ',')} %`;
                 document.getElementById('outputRendement').textContent = `${rendementBrut.toFixed(2).replace('.', ',')} %`;
@@ -317,6 +331,9 @@
 
             } else {
                 locatifResultsEl.style.display = 'none';
+                locatifResultsEl2.style.display = 'none';
+                locatifResultsEl3.style.display = 'none';
+                locatifResultsEl4.style.display = 'none';
             }
 
             // Calculs et affichage des résultats de négociation
@@ -330,13 +347,16 @@
             const reductionMinimum = prix > 0 ? ((prix - prixAcceptable) / prix) * 100 : 0;
 
             const reductionResultsEl = document.getElementById('reductionResults');
+            const reductionResultsEl2 = document.getElementById('reductionResults2');
             if (prix > prixAcceptable) {
                 reductionResultsEl.style.display = 'block';
+                reductionResultsEl2.style.display = 'block';
                 document.getElementById('outputEndettementTotal').textContent = `${(endettementTotalTaux * 100).toFixed(1).replace('.', ',')} %`;
                 document.getElementById('outputPrixAcceptable').textContent = currencyFormatter.format(prixAcceptable);
                 document.getElementById('outputReductionMinimum').textContent = `${Math.max(0, reductionMinimum).toFixed(1).replace('.', ',')} %`;
             } else {
                 reductionResultsEl.style.display = 'none';
+                reductionResultsEl2.style.display = 'none';
             }
 
             // Mise à jour des affichages permanents
