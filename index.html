@@ -282,7 +282,6 @@
             const endettementTotalTaux = denominateurDette > 0 ? ((mensualiteProjet + mensualiteActuel) / denominateurDette) : 0;
             
             let prixAcceptable = 0;
-            // Correction ici : la mensualité cible est la capacité d'emprunt totale, qui est la somme de la capacité d'emprunt propre et locative.
             const mensualiteCible = capaciteEndettement + capaciteEmpruntLocative;
             if (mensualiteCible > 0 && facteurPMT > 0) {
                 prixAcceptable = mensualiteCible / facteurPMT;
